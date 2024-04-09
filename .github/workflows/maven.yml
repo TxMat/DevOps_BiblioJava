@@ -30,6 +30,8 @@ jobs:
         distribution: 'temurin'
         cache: maven
     
+    - name: pwd test
+      run: pwd
     - name: Maven test 
       run: mvn clean test #clean et lance les tests
 
@@ -49,6 +51,8 @@ jobs:
     needs: test-and-coverage
     steps:
 
+    - name: pwd test
+      run: pwd
     - name: Build with Maven
       run: mvn -B package #--file pom.xml
       #-B = maven ne demande pas d'interaction de l'user
