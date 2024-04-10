@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.devops.groupe.nachosdeux</groupId>
-  <artifactId>devops-bibliojava</artifactId>
+  <artifactId>DevOps_BiblioJava</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   
   <dependencies>
@@ -19,5 +19,26 @@
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-    </properties>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
+        <executions>
+          <execution>
+            <id>default-prepare-agent</id>
+            <goals><goal>prepare-agent</goal></goals>
+          </execution>
+          <execution>
+            <id>coverage-report</id>
+            <goals><goal>report</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
