@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,39 @@ public class DataFrame<K, L, V> {
 
             dataFrame.put(index.get(i), currentColumn);
         }
+    }
+
+    /************* AFFICHAGE *******/
+
+
+    //affiche le dataFrame en entier
+    public String toString(){
+        StringBuilder res = new StringBuilder();
+
+        boolean first = false;
+
+        for (Map.Entry<K, Map<L, V>> index : dataFrame.entrySet()) {
+
+            Map<L, V> column = index.getValue();
+
+            //Pour la première ligne uniquement on affiche le nom des colonnes
+            if(!first){
+                res.append("X \t");
+                for(L label : column.keySet()){
+                    res.append(label).append("\t");
+                }
+                res.append("\n");
+                first = true;
+            }
+
+            res.append(index.getKey()).append("\t");
+
+            for(V value : column.values()){
+                res.append(value).append("\t");
+            }
+            res.append("\n");
+        }
+        return res.toString();
     }
 
     /************* MAIN *******/
