@@ -4,10 +4,6 @@
   <artifactId>DevOps_BiblioJava</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
-  <build>
-      <defaultGoal>install</defaultGoal>
-  </build>
-  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
