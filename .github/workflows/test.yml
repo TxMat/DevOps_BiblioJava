@@ -1,0 +1,35 @@
+name: Java Test with Maven
+
+on:
+  push:
+    branches: [ "DataFrameCSV" ]
+  pull_request:
+    branches: [ "DataFrameCSV" ]
+
+jobs:
+  test-and-coverage:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check the code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+    
+    - name: Maven test 
+      run: mvn clean test #clean et lance les tests
+
+    - name: Generate code coverage report
+      run: mvn jacoco:report
+
+    - name: Upload the report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: target/site/jacoco/dataframe.html
