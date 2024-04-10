@@ -29,21 +29,23 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: pwd test
-      run: pwd
-    - name: cat test
-      run: cat pom.xml
+  
     - name: Maven test 
       run: mvn clean test #clean et lance les tests
 
-    #- name: Generate code coverage report
-    #  run: mvn jacoco:report
+    - name: Generate code coverage report
+      run: mvn jacoco:report
 
-    #- name: Upload the report
-     # uses: actions/upload-artifact@v3
-    #  with:
-     #   name: coverage-report
-     #   path: target/site/jacoco/index.html
+    - name: Upload the report
+      uses: actions/upload-artifact@v3
+      with:
+        name: coverage-report
+        path: target/site/jacoco/index.html
+      
+    - name: Generate JaCoCo Badge
+      uses: cicirello/jacoco-badge-generator@v2.11.0
+      with:
+        generate-branches-badge: true
 
 
     
@@ -61,10 +63,7 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-    - name: pwd test
-      run: pwd
-    - name: ls test
-      run: cat pom.xml
+
     - name: Build with Maven
       run: mvn package --file pom.xml
       #-B = maven ne demande pas d'interaction de l'user
