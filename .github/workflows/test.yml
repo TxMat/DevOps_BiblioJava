@@ -2,9 +2,9 @@ name: Java Test with Maven
 
 on:
   push:
-    branches: [ "DataFrameCSV" ]
+    branches: [ "dataFrame" ]
   pull_request:
-    branches: [ "DataFrameCSV" ]
+    branches: [ "dataFrame" ]
 
 jobs:
   test-and-coverage:
