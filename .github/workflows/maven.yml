@@ -51,8 +51,8 @@ jobs:
     needs: test-and-coverage
     steps:
 
-    - name: pwd test
-      run: pwd
+    - name: ls test
+      run: ls
     - name: Build with Maven
       run: mvn package --file pom.xml
       #-B = maven ne demande pas d'interaction de l'user
