@@ -2,9 +2,9 @@ name: Java Test with Maven
 
 on:
   push:
-    branches: [ "dataFrame2" ]
+    branches: [ "DataFrame2" ]
   pull_request:
-    branches: [ "dataFrame2" ]
+    branches: [ "DataFrame2" ]
 
 jobs:
   test-and-coverage:
