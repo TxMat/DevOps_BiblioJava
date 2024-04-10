@@ -10,9 +10,9 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "gitActions" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "gitActions" ]
 
 jobs:
   test-and-coverage:
@@ -54,7 +54,7 @@ jobs:
     - name: pwd test
       run: pwd
     - name: Build with Maven
-      run: mvn -B package #--file pom.xml
+      run: mvn package --file pom.xml
       #-B = maven ne demande pas d'interaction de l'user
       #package = compile, créé le jar
       #--file = fichier à utiliser
