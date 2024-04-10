@@ -46,6 +46,9 @@ jobs:
       uses: cicirello/jacoco-badge-generator@v2.11.0
       with:
         generate-branches-badge: true
+        badges-directory: .github/badges
+        generate-coverage-badge: true
+        coverage-badge-filename: jacoco.svg
 
 
     
