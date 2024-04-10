@@ -2,9 +2,9 @@ name: Java Test with Maven
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "dataFrame2" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "dataFrame2" ]
 
 jobs:
   test-and-coverage:
@@ -42,7 +42,7 @@ jobs:
         generate-coverage-badge: true
         coverage-badge-filename: jacoco.svg
 
-  
+
   # Build job
   gh-pages:
     runs-on: ubuntu-latest
@@ -67,7 +67,7 @@ jobs:
 
       - name: Generate maven site
         run: mvn site
-        
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
@@ -76,7 +76,7 @@ jobs:
         with:
           source: ./target/site
           destination: ./_site
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
