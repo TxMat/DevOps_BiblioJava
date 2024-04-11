@@ -151,6 +151,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: ls
+        run: ls
+
       - name: Login to docker
         run: docker login --username elsabn --password ${{ secrets.GH_PAT }} ghcr.io
 
