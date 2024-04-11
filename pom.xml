@@ -39,6 +39,61 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>4.0.0-M13</version>
+          
+                
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <version>3.5.0</version>
+      </plugin>
+
+      <!-- from : https://stackoverflow.com/questions/13748659/how-to-include-github-markdown-files-into-maven-site -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+            <execution>
+                <!-- Copy the readme file to the site source files so that a page is generated from it. -->
+                <id>copy-readme</id>
+                <phase>pre-site</phase>
+                <goals>
+                    <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                    <outputDirectory>${basedir}/src/site/markdown</outputDirectory>
+                    <resources>
+                        <resource>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>README.md</include>
+                            </includes>
+                        </resource>
+                    </resources>
+                </configuration>
+            </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+        </configuration>
+      </plugin>
+    </plugins>
+
+  
+  </reporting>
 </project>
