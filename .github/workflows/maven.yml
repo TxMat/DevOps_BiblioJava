@@ -52,6 +52,9 @@ jobs:
 
     - name: Generate maven site
       run: mvn site
+
+    - name : test path
+      run : ls
      
 
 
@@ -94,6 +97,8 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         
+      - name : test path
+        run : ls
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
@@ -116,7 +121,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
-      
+
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
