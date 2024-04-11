@@ -29,6 +29,14 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+    
+    - name: Cache Maven  #car cache au dessu sn'a pas l'air de fonctionner
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
   
     - name: Maven test 
       run: mvn clean test #clean et lance les tests
@@ -95,8 +103,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: path
-        run: ls
+          
+      - name: Cache Maven  #car cache au dessu sn'a pas l'air de fonctionner
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
         
       - name: Setup Pages
         uses: actions/configure-pages@v5
