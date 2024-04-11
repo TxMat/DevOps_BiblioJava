@@ -95,6 +95,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+      - name: path
+        run: ls
         
       - name: Setup Pages
         uses: actions/configure-pages@v5
