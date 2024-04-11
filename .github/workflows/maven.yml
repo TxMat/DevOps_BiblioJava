@@ -103,7 +103,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-          
+
       - name: Cache Maven  #car cache au dessu sn'a pas l'air de fonctionner
         uses: actions/cache@v3
         with:
@@ -111,6 +111,8 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+      - name : path
+        run : ls
         
       - name: Setup Pages
         uses: actions/configure-pages@v5
