@@ -1,6 +1,6 @@
 FROM openjdk:21
 
-COPY ./target/*.jar /biblio/
+COPY *.jar /biblio/
 
 WORKDIR /biblio/
 
