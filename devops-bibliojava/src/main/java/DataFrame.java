@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,11 @@ public class DataFrame<K, L, V> {
             }
         }
 
-
+        public DataFrame(String csvFilename, char delimiter) throws FileNotFoundException {
+            CSVParser<K, L, V> csvParser = new CSVParser<>();
+            csvParser.parseCSV(dataFrame, csvFilename, delimiter);
+            //dataFrame = csvParser.parseCSV_NoDynamicType(dataFrame, csvFilename, delimiter);
+        }
 
 
     public static void main(String[] args) {
@@ -28,6 +33,11 @@ public class DataFrame<K, L, V> {
         List<List<Integer>> values = List.of(List.of(1, 2), List.of(3, 4), List.of(5, 6), List.of(7, 8), List.of(9, 10));
 
         DataFrame<String, String, Integer> df = new DataFrame<>(index, label, values);
+        try {
+            DataFrame<String, String, Object> csvDataFrame = new DataFrame<>("devops-bibliojava/src/main/resources/Classeur1.csv", ';');
+        } catch(Exception ex) {
+            throw new RuntimeException(ex);
+        }
 
     }
 
