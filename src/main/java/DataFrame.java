@@ -4,10 +4,20 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+
 public class DataFrame<K, L, V> {
 
     private Map<K, Map<L, V>> dataFrame = new LinkedHashMap<>();
 
+    /**
+     * Constructeur pour la création d'une nouvelle instance de DataFrame avec des listes d'objets.
+     *
+     * @param index Une liste d'indices pour les lignes du DataFrame. Chaque indice doit être unique.
+     * @param label Une liste des labels pour les colonnes du DataFrame.
+     * @param values Une liste de listes de valeurs, où chaque sous-liste correspond aux valeurs d'une ligne.
+     * @throws Exception Si le nombre d'indices ne correspond pas au nombre de lignes de valeurs,
+     *                   ou si le nombre de valeurs dans une ligne ne correspond pas au nombre de labels.
+     */
     public DataFrame(List<K> index, List<L> label, List<List<V>> values) throws Exception {
 
         if(index.size() != values.size()){
@@ -36,8 +46,14 @@ public class DataFrame<K, L, V> {
 
     /************* AFFICHAGE *******/
 
-
-    //affiche le dataFrame en entier
+    /**
+     * Retourne une représentation textuelle du DataFrame, sous forme d'un tableau à deux dimensions où chaque ligne
+     * est affichée avec son index et les valeurs des colonnes
+     *
+     * La première ligne affiche le nom des colonnes
+     *
+     * @return String représentant le DataFrame
+     */
     public String toString(){
         StringBuilder res = new StringBuilder();
 

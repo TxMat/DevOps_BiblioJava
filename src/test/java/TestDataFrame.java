@@ -14,6 +14,8 @@ public class TestDataFrame {
     DataFrame<String, String, Integer> voidDF;
     DataFrame<String, String, Integer> filledDF;
 
+
+    //Initialisation de deux DataFrame : un vide et un rempli
     @Before
     public void init() throws Exception{
         List<String> index1 = List.of();
@@ -36,6 +38,7 @@ public class TestDataFrame {
 
     /* Tests sur la construction de DataFrame */
 
+    //Ce test vérifie qu'une exception est levée si le nombre de valeurs dans une colonne n'est pas valide
     @Test (expected = IndexOutOfBoundsException.class)
     public void testCreateDataFrameWithNoValueInColumn() throws Exception {
         DataFrame<String, String, Integer> dataFrame;
@@ -50,6 +53,7 @@ public class TestDataFrame {
         dataFrame = new DataFrame<>(index2, label2, values2);
     }
 
+    //Ce test vérifie qu'une exception est levée si le nombre de valeurs dans une ligne n'est pas valide
     @Test (expected = IndexOutOfBoundsException.class)
     public void testCreateDataFrameWithNoValueInLine() throws Exception {
         DataFrame<String, String, Integer> dataFrame;
@@ -63,6 +67,7 @@ public class TestDataFrame {
         dataFrame = new DataFrame<>(index2, label2, values2);
     }
 
+    //Ce test vérifie qu'une exception est levée si le nombre de lignes est plus grand que le nombre d'indices
     @Test (expected = IndexOutOfBoundsException.class)
     public void testCreateDataFrameWithMoreLineThanRequire() throws Exception {
         DataFrame<String, String, Integer> dataFrame;
@@ -78,6 +83,7 @@ public class TestDataFrame {
         dataFrame = new DataFrame<>(index2, label2, values2);
     }
 
+    //Ce test vérifie qu'une exception est levée si le nombre de colonnes est plus grand que le nombre de labels
     @Test (expected = IndexOutOfBoundsException.class)
     public void testCreateDataFrameWithMoreColumnThanRequire() throws Exception {
         DataFrame<String, String, Integer> dataFrame;
@@ -92,6 +98,8 @@ public class TestDataFrame {
         dataFrame = new DataFrame<>(index2, label2, values2);
     }
 
+    //Ce test vérifie que la création d'un Dataframe avec deux nom d'indice identique fonctionne
+    // et que le premier est écrasé par le second
     @Test
     public void testCreateDataFrameWithSameIndex() throws Exception {
         DataFrame<String, String, Integer> dataFrame;
@@ -109,6 +117,8 @@ public class TestDataFrame {
         assertEquals(filledDF.toString(), dataFrame.toString());
     }
 
+    //Ce test vérifie que la création d'un Dataframe avec deux nom de labels identique fonctionne
+    // et que le premier est écrasé par le second
     @Test
     public void testCreateDataFrameWithSameLabel() throws Exception {
         DataFrame<String, String, Integer> dataFrame;
