@@ -3,7 +3,7 @@
   <groupId>org.devops.groupe.nachosdeux</groupId>
   <artifactId>DevOps_BiblioJava</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -43,8 +43,8 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <version>4.0.0-M13</version>
-          
-                
+
+
       </plugin>
 
       <plugin>
@@ -94,6 +94,6 @@
       </plugin>
     </plugins>
 
-  
+
   </reporting>
 </project>
