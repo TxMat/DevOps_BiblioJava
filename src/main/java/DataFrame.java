@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Math.abs;
+
 
 public class DataFrame<K, L, V> {
 
@@ -50,7 +52,7 @@ public class DataFrame<K, L, V> {
         }
     }
 
-    /************* AFFICHAGE *******/
+            /************* AFFICHAGE *******/
 
     /**
      * Returns a textual representation of the dataFrame in the form of a two-dimensional array where each row is
@@ -84,8 +86,190 @@ public class DataFrame<K, L, V> {
     }
 
 
+            /************* STATISTIQUES *******/
 
-    /************* MAIN *******/
+
+    /**
+     * Returns the smallest element of the specified column.
+     *
+     * @param label The label of the column where to search for the minimum.
+     * @return The smallest element in the column, null if no element is comparable or if the column is empty.
+     */
+    public V getMin(L label){
+        V min = null;
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return null;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(min == null){
+                    min = value;
+                } else if(((Comparable<V>) value).compareTo(min) < 0){
+                    min = value;
+                }
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Returns the largest element of the specified column.
+     *
+     * @param label The label of the column where to search for the maximum.
+     * @return The largest element in the column, null if no element is comparable or if the column is empty.
+     */
+    public V getMax(L label){
+        V max = null;
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return null;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(max == null){
+                    max = value;
+                } else if(((Comparable<V>) value).compareTo(max) > 0){
+                    max = value;
+                }
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Returns the average of the elements of the specified column.
+     *
+     * @param label The label of the column where to calculate the average.
+     * @return The average of the non-null elements in the column or 0 if the column is empty.
+     */
+    public double getAverage(L label){
+        double average = 0;
+        int i =0;
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return 0;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(value instanceof Number){
+                    average += ((Number) value).doubleValue();
+                    i++;
+                }
+            }
+        }
+
+        //éviter la div par 0
+        if(average == 0){
+            return average;
+        }
+
+        return average / i;
+    }
+
+    /**
+     * Returns the number of elements of the specified column.
+     *
+     * @param label The label of the column where to count the elements.
+     * @return The number of non-null elements in the column or 0 if the column is empty.
+     */
+    public int getCount(L label){
+        int count = 0;
+
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return 0;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(value instanceof Number){
+                    count ++;
+                }
+            }
+        }
+        return count;
+    }
+
+
+    /**
+     * Returns the sum of the elements of the specified column.
+     *
+     * @param label The label of the column where to calculate the sum of the elements.
+     * @return The sum of the non-null elements in the column or 0 if the column is empty.
+     */
+    public double getSum(L label){
+        double count = 0;
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return 0;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(value instanceof Number){
+                    count += ((Number) value).doubleValue();
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns the absolute sum of the elements of the specified column.
+     *
+     * @param label The label of the column where to calculate the absolute sum of the elements.
+     * @return The absolute sum of the non-null elements in the column or 0 if the column is empty.
+     */
+    public double getAbsolute(L label){
+        double count = 0;
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return 0;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(value instanceof Number){
+                    count += abs(((Number) value).doubleValue());
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns the product of the elements of the specified column.
+     *
+     * @param label The label of the column where to calculate the product of the elements.
+     * @return The product of the non-null elements in the column or 0 if the column is empty.
+     */
+    public double getProduct(L label){
+        double count = 0;
+
+        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return 0;
+        }
+
+        for(V value : dataFrame.get(label).values()){
+            if(value != null){
+                if(count == 0){
+                    count = 1;
+                }
+                if(value instanceof Number){
+                    count = count * ((Number) value).doubleValue();
+                }
+            }
+        }
+        return count;
+    }
+
+
+
+            /************* MAIN *******/
 
     public static void main(String[] args) throws Exception {
         List<String> index = List.of("ligne1", "ligne2");
@@ -93,7 +277,7 @@ public class DataFrame<K, L, V> {
 
         /* Chaque sous-listes represente les valeurs d'une colonne */
         List<List<Object>> values = List.of(
-                List.of(1, 2),
+                List.of(-1, 2),
                 List.of(3.1, 4.2),
                 List.of("Hello World", "Goodbye World"),
                 List.of('a', 'b'));
@@ -101,6 +285,14 @@ public class DataFrame<K, L, V> {
         DataFrame<String, String, Object> df = new DataFrame<>(index, label, values);
         System.out.println(df.toString());
 
+        System.out.println(df.getMin("Colonne1"));
+        System.out.println(df.getMax("Colonne1"));
+        System.out.println(df.getAverage("Colonne1"));
+        System.out.println(df.getCount("Colonne1"));
+        System.out.println(df.getSum("Colonne1"));
+        System.out.println(df.getAbsolute("Colonne1"));
+        System.out.println(df.getProduct("Colonne1"));
+        
     }
 
 }
