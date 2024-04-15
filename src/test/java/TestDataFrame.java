@@ -35,7 +35,7 @@ public class TestDataFrame {
     }
 
 
-    /* Tests sur la construction de DataFrame */
+            /* Tests sur la construction de DataFrame */
 
 
     //Ce test vérifie qu'une exception est levée si le nombre de valeurs dans une colonne n'est pas valide
@@ -142,5 +142,113 @@ public class TestDataFrame {
 
         assertEquals(filledDF.toString(), dataFrame.toString());
     }
-    
+
+
+
+            /* Test sur les méthodes statistiques de DataFrame */
+
+        /* Test sur filledDF */
+
+    //Ce test vérifie que la fonction getMin(L label) donne la valeur minimale du dataFrame de la colonne label
+    @Test
+    public void testGetMinDataFrame(){
+        Integer min = 1;
+        assertEquals(filledDF.getMin("colonne1"), min);
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) donne la valeur maximale du dataFrame de la colonne label
+    @Test
+    public void testGetMaxDataFrame(){
+        Integer max = 3;
+        assertEquals(filledDF.getMax("colonne1"), max);
+    }
+
+    //Ce test vérifie que la fonction getAverage(L label) donne la valeur moyenne du dataFrame de la colonne label
+    @Test
+    public void testGetAverageDataFrame(){
+        double average = 2;
+        assertEquals(filledDF.getAverage("colonne1"), average, 0.0001);
+    }
+
+    //Ce test vérifie que la fonction getCount(L label) donne le nombre d'entrée non null du dataFrame de la colonne label
+    @Test
+    public void testGetCountDataFrame(){
+        int count = 3;
+        assertEquals(filledDF.getCount("colonne1"), count);
+    }
+
+    //Ce test vérifie que la fonction getSum(L label) calcule la somme des entrées non null du dataFrame de la colonne label
+    @Test
+    public void testGetSumDataFrame(){
+        double sum = 6;
+        assertEquals(filledDF.getSum("colonne1"), sum, 0.0001);
+    }
+
+    //Ce test vérifie que la fonction getAbsolute(L label) calcule la valeur absolue de somme des entrées non null
+    // du dataFrame de la colonne label
+    @Test
+    public void testAbsoluteMinDataFrame(){
+        double absolute = 6;
+        assertEquals(filledDF.getAbsolute("colonne1"), absolute, 0.0001);
+    }
+
+    //Ce test vérifie que la fonction getProduct(L label) calcule le produit des entrées non null du dataFrame de la colonne label
+    @Test
+    public void testGetProductDataFrame(){
+        double product = 6;
+        assertEquals(filledDF.getProduct("colonne1"), product, 0.0001);
+    }
+
+        /*Test sur voidDF */
+
+    //Ce test vérifie que la fonction getMin(L label) donne la valeur minimale du dataFrame de la colonne label
+    @Test
+    public void testGetMinEmptyDataFrame(){
+        assertNull(voidDF.getMin("colonne1"));
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) donne la valeur maximale du dataFrame de la colonne label
+    @Test
+    public void testGetMaxEmptyDataFrame(){
+        Integer max = 0;
+        assertNull(voidDF.getMax("colonne1"));
+    }
+
+    //Ce test vérifie que la fonction getAverage(L label) donne la valeur moyenne du dataFrame de la colonne label
+    @Test
+    public void testGetAverageEmptyDataFrame(){
+        double average = 0;
+        assertEquals(voidDF.getAverage("colonne1"), average, 0.0001);
+    }
+
+    //Ce test vérifie que la fonction getCount(L label) donne le nombre d'entrée non null du dataFrame de la colonne label
+    @Test
+    public void testGetCountEmptyDataFrame(){
+        int count = 0;
+        assertEquals(voidDF.getCount("colonne1"), count);
+    }
+
+    //Ce test vérifie que la fonction getSum(L label) calcule la somme des entrées non null du dataFrame de la colonne label
+    @Test
+    public void testGetSumEmptyDataFrame(){
+        double sum = 0;
+        assertEquals(voidDF.getSum("colonne1"), sum, 0.0001);
+    }
+
+    //Ce test vérifie que la fonction getAbsolute(L label) calcule la valeur absolue de somme des entrées non null
+    // du dataFrame de la colonne label
+    @Test
+    public void testAbsolutEmptyDataFrame(){
+        double absolute = 0;
+        assertEquals(voidDF.getAbsolute("colonne1"), absolute, 0.0001);
+    }
+
+    //Ce test vérifie que la fonction getProduct(L label) calcule le produit des entrées non null du dataFrame de la colonne label
+    @Test
+    public void testGetProductEmptyDataFrame(){
+        double product = 0;
+        assertEquals(voidDF.getProduct("colonne1"), product, 0.0001);
+    }
+
+
 }
