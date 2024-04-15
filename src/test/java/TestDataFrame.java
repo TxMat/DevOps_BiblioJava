@@ -210,7 +210,6 @@ public class TestDataFrame {
     //Ce test vérifie que la fonction getMax(L label) donne la valeur maximale du dataFrame de la colonne label
     @Test
     public void testGetMaxEmptyDataFrame(){
-        Integer max = 0;
         assertNull(voidDF.getMax("colonne1"));
     }
 
