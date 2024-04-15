@@ -167,7 +167,7 @@ public class TestDataFrame {
     @Test
     public void testGetAverageDataFrame(){
         double average = 2;
-        assertEquals(filledDF.getAverage("colonne1"), average, 0.0001);
+        assertEquals(filledDF.getAverage("colonne1").doubleValue(), average, 0.0001);
     }
 
     //Ce test vérifie que la fonction getCount(L label) donne le nombre d'entrée non null du dataFrame de la colonne label
@@ -181,7 +181,7 @@ public class TestDataFrame {
     @Test
     public void testGetSumDataFrame(){
         double sum = 6;
-        assertEquals(filledDF.getSum("colonne1"), sum, 0.0001);
+        assertEquals(filledDF.getSum("colonne1").doubleValue(), sum, 0.0001);
     }
 
     //Ce test vérifie que la fonction getAbsolute(L label) calcule la valeur absolue de somme des entrées non null
@@ -189,14 +189,14 @@ public class TestDataFrame {
     @Test
     public void testAbsoluteMinDataFrame(){
         double absolute = 6;
-        assertEquals(filledDF.getAbsolute("colonne1"), absolute, 0.0001);
+        assertEquals(filledDF.getAbsolute("colonne1").doubleValue(), absolute, 0.0001);
     }
 
     //Ce test vérifie que la fonction getProduct(L label) calcule le produit des entrées non null du dataFrame de la colonne label
     @Test
     public void testGetProductDataFrame(){
         double product = 6;
-        assertEquals(filledDF.getProduct("colonne1"), product, 0.0001);
+        assertEquals(filledDF.getProduct("colonne1").doubleValue(), product, 0.0001);
     }
 
         /*Test sur voidDF */
@@ -216,37 +216,33 @@ public class TestDataFrame {
     //Ce test vérifie que la fonction getAverage(L label) donne la valeur moyenne du dataFrame de la colonne label
     @Test
     public void testGetAverageEmptyDataFrame(){
-        double average = 0;
-        assertEquals(voidDF.getAverage("colonne1"), average, 0.0001);
+        assertNull(voidDF.getAverage("colonne1"));
     }
 
     //Ce test vérifie que la fonction getCount(L label) donne le nombre d'entrée non null du dataFrame de la colonne label
     @Test
     public void testGetCountEmptyDataFrame(){
-        int count = 0;
+        int count = -1;
         assertEquals(voidDF.getCount("colonne1"), count);
     }
 
     //Ce test vérifie que la fonction getSum(L label) calcule la somme des entrées non null du dataFrame de la colonne label
     @Test
     public void testGetSumEmptyDataFrame(){
-        double sum = 0;
-        assertEquals(voidDF.getSum("colonne1"), sum, 0.0001);
+        assertNull(voidDF.getSum("colonne1"));
     }
 
     //Ce test vérifie que la fonction getAbsolute(L label) calcule la valeur absolue de somme des entrées non null
     // du dataFrame de la colonne label
     @Test
     public void testAbsolutEmptyDataFrame(){
-        double absolute = 0;
-        assertEquals(voidDF.getAbsolute("colonne1"), absolute, 0.0001);
+        assertNull(voidDF.getAbsolute("colonne1"));
     }
 
     //Ce test vérifie que la fonction getProduct(L label) calcule le produit des entrées non null du dataFrame de la colonne label
     @Test
     public void testGetProductEmptyDataFrame(){
-        double product = 0;
-        assertEquals(voidDF.getProduct("colonne1"), product, 0.0001);
+        assertNull(voidDF.getProduct("colonne1"));
     }
 
 

@@ -95,19 +95,19 @@ public class DataFrame<K, L, V> {
      * @param label The label of the column where to search for the minimum.
      * @return The smallest element in the column, null if no element is comparable or if the column is empty.
      */
-    public V getMin(L label){
-        V min = null;
+    public Number getMin(L label){
+        Number min = null;
 
         if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
             return null;
         }
 
         for(V value : dataFrame.get(label).values()){
-            if(value != null){
+            if(value instanceof Number){
                 if(min == null){
-                    min = value;
-                } else if(((Comparable<V>) value).compareTo(min) < 0){
-                    min = value;
+                    min = (Number) value;
+                } else if(((Comparable<Number>) value).compareTo(min) < 0){
+                    min = (Number) value;
                 }
             }
         }
@@ -120,19 +120,19 @@ public class DataFrame<K, L, V> {
      * @param label The label of the column where to search for the maximum.
      * @return The largest element in the column, null if no element is comparable or if the column is empty.
      */
-    public V getMax(L label){
-        V max = null;
+    public Number getMax(L label){
+        Number max = null;
 
         if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
             return null;
         }
 
         for(V value : dataFrame.get(label).values()){
-            if(value != null){
+            if(value instanceof Number)  {
                 if(max == null){
-                    max = value;
-                } else if(((Comparable<V>) value).compareTo(max) > 0){
-                    max = value;
+                    max = (Number) value;
+                } else if(((Comparable<Number>) value).compareTo(max) > 0){
+                    max = (Number) value;
                 }
             }
         }
@@ -143,54 +143,66 @@ public class DataFrame<K, L, V> {
      * Returns the average of the elements of the specified column.
      *
      * @param label The label of the column where to calculate the average.
-     * @return The average of the non-null elements in the column or 0 if the column is empty.
+     * @return The average of the non-null elements in the column or 0 if the column is empty or null if the label isn't
+     *         correct.
      */
-    public double getAverage(L label){
-        double average = 0;
-        int i =0;
+    public Number getAverage(L label){
 
-        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+        if(dataFrame.get(label) == null ) {
+            return null;
+        } else if(dataFrame.get(label).isEmpty()) {
             return 0;
+
         }
+
+        Number average = null;
+        int i =0;
 
         for(V value : dataFrame.get(label).values()){
             if(value != null){
                 if(value instanceof Number){
-                    average += ((Number) value).doubleValue();
+                    if(average == null){
+                        average = 0;
+                    }
+                    average = average.doubleValue() + ((Number) value).doubleValue();
                     i++;
                 }
             }
         }
 
-        //éviter la div par 0
-        if(average == 0){
+
+        if(average == null){
+            return null;
+        } else if(average.doubleValue() == 0){ //éviter la div par 0
             return average;
         }
 
-        return average / i;
+        return average.doubleValue() / i;
     }
 
     /**
      * Returns the number of elements of the specified column.
      *
      * @param label The label of the column where to count the elements.
-     * @return The number of non-null elements in the column or 0 if the column is empty.
+     * @return The number of non-null elements in the column or 0 if the column is empty
+     *         or -1 if the column doesn't exist.
      */
     public int getCount(L label){
-        int count = 0;
 
-
-        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+        if(dataFrame.get(label) == null) {
+            return -1;
+        } else if (dataFrame.get(label).isEmpty()) {
             return 0;
         }
 
+        int count = 0;
+
         for(V value : dataFrame.get(label).values()){
             if(value != null){
-                if(value instanceof Number){
-                    count ++;
-                }
+                count ++;
             }
         }
+
         return count;
     }
 
@@ -199,19 +211,26 @@ public class DataFrame<K, L, V> {
      * Returns the sum of the elements of the specified column.
      *
      * @param label The label of the column where to calculate the sum of the elements.
-     * @return The sum of the non-null elements in the column or 0 if the column is empty.
+     * @return The sum of the non-null elements in the column or 0 if the column is empty or 0 if the column is empty or null if the label isn't
+     *         correct.
      */
-    public double getSum(L label){
-        double count = 0;
+    public Number getSum(L label){
 
-        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+        if(dataFrame.get(label) == null ) {
+            return null;
+        } else if(dataFrame.get(label).isEmpty()) {
             return 0;
         }
+
+        Number count = null;
 
         for(V value : dataFrame.get(label).values()){
             if(value != null){
                 if(value instanceof Number){
-                    count += ((Number) value).doubleValue();
+                    if(count == null){
+                        count = 0;
+                    }
+                    count = count.doubleValue() + ((Number) value).doubleValue();
                 }
             }
         }
@@ -222,19 +241,26 @@ public class DataFrame<K, L, V> {
      * Returns the absolute sum of the elements of the specified column.
      *
      * @param label The label of the column where to calculate the absolute sum of the elements.
-     * @return The absolute sum of the non-null elements in the column or 0 if the column is empty.
+     * @return The absolute sum of the non-null elements in the column or 0 if the column is empty or 0 if the column is empty or null if the label isn't
+     *         correct.
      */
-    public double getAbsolute(L label){
-        double count = 0;
+    public Number getAbsolute(L label){
 
-        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+        if(dataFrame.get(label) == null ) {
+            return null;
+        } else if(dataFrame.get(label).isEmpty()) {
             return 0;
         }
+
+        Number count = null;
 
         for(V value : dataFrame.get(label).values()){
             if(value != null){
                 if(value instanceof Number){
-                    count += abs(((Number) value).doubleValue());
+                    if(count == null){
+                        count = 0;
+                    }
+                    count = count.doubleValue() + abs(((Number) value).doubleValue());
                 }
             }
         }
@@ -245,22 +271,26 @@ public class DataFrame<K, L, V> {
      * Returns the product of the elements of the specified column.
      *
      * @param label The label of the column where to calculate the product of the elements.
-     * @return The product of the non-null elements in the column or 0 if the column is empty.
+     * @return The product of the non-null elements in the column or 0 if the column is empty or 0 if the column is empty or null if the label isn't
+     *         correct.
      */
-    public double getProduct(L label){
-        double count = 0;
+    public Number getProduct(L label){
 
-        if(dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+        if(dataFrame.get(label) == null ) {
+            return null;
+        } else if(dataFrame.get(label).isEmpty()) {
             return 0;
         }
 
+        Number count = null;
+
         for(V value : dataFrame.get(label).values()){
             if(value != null){
-                if(count == 0){
-                    count = 1;
-                }
                 if(value instanceof Number){
-                    count = count * ((Number) value).doubleValue();
+                    if(count == null){
+                        count = 1;
+                    }
+                    count = count.doubleValue() * ((Number) value).doubleValue();
                 }
             }
         }
@@ -285,13 +315,13 @@ public class DataFrame<K, L, V> {
         DataFrame<String, String, Object> df = new DataFrame<>(index, label, values);
         System.out.println(df.toString());
 
-        System.out.println(df.getMin("Colonne1"));
-        System.out.println(df.getMax("Colonne1"));
-        System.out.println(df.getAverage("Colonne1"));
-        System.out.println(df.getCount("Colonne1"));
-        System.out.println(df.getSum("Colonne1"));
-        System.out.println(df.getAbsolute("Colonne1"));
-        System.out.println(df.getProduct("Colonne1"));
+        System.out.println(df.getMin("colonne3"));
+        System.out.println(df.getMax("colonne3"));
+        System.out.println(df.getAverage("colonne3"));
+        System.out.println(df.getCount("colonne3"));
+        System.out.println(df.getSum("colonne3"));
+        System.out.println(df.getAbsolute("colonne3"));
+        System.out.println(df.getProduct("colonne3"));
         
     }
 
