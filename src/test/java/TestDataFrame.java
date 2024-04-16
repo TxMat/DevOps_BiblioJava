@@ -494,4 +494,168 @@ public class TestDataFrame {
         assertNull(voidDF.getProduct("colonne1"));
     }
 
+
+
+            /* Test sur les méthodes sélection de DataFrame */
+
+
+        /*Tests sur sélection de lignes*/
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingRows(K index) retourne le meme dataframe
+    //que celui copié si on copie tous les index
+    @Test
+    public void testSelectIndexOnDataFrame() throws Exception {
+        List<String> indexList = List.of("ligne1", "ligne2", "ligne3");
+        DataFrame<String, String, Object> copyFilled = filledDF.constructNewDataFrameWithSelectingRows(indexList);
+        assertEquals(filledDF.toString(), copyFilled.toString());
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingRows(K index) retourne un dataFrame
+    //s'il y a des indices correcte et d'autres non
+    @Test
+    public void testSelectWrongIndexOnDataFrame() throws Exception {
+        List<String> indexList = List.of("ligne1", "ligneB");
+        DataFrame<String, String, Object> df = filledDF.constructNewDataFrameWithSelectingRows(indexList);
+
+        List<String> index2 = List.of("ligne1");
+        List<String> label2 = List.of("colonne1", "colonne2", "colonne3", "colonne4");
+        List<List<Object>> values2 = List.of(
+                List.of(1),
+                List.of("I'm toto"),
+                List.of('a'),
+                List.of(true)
+        );
+
+        DataFrame<String, String, Object> copyofFilleDF = new DataFrame<>(index2, label2, values2);
+
+        assertEquals(copyofFilleDF.toString(), df.toString());
+    }
+
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingRows(K index) retourne null
+    //s'il n'y a pas d'indice correcte à copier
+    @Test
+    public void testSelectAllWrongIndexOnDataFrame() throws Exception {
+        List<String> indexList = List.of("LigneA", "LigneB");
+        DataFrame<String, String, Object> nullDF = filledDF.constructNewDataFrameWithSelectingRows(indexList);
+        assertNull(nullDF);
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingRows(K index) retourne null
+    //si le dataFrame où copier les index est vide
+    @Test
+    public void testSelectIndexOnEmptyDataFrame() throws Exception {
+        List<String> indexList = List.of("LigneA", "LigneB");
+        DataFrame<String, String, Object> nullDF = voidDF.constructNewDataFrameWithSelectingRows(indexList);
+        assertNull(nullDF);
+    }
+
+
+        /*Tests sur les sélection de colonnes*/
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingColumns(L label) retourne le meme dataframe
+    //que celui copié si on copie tous les index
+    @Test
+    public void testSelectLabelOnDataFrame() throws Exception {
+        List<String> columnList = List.of("colonne1", "colonne2", "colonne3", "colonne4");
+        DataFrame<String, String, Object> copyFilled = filledDF.constructNewDataFrameWithSelectingColumns(columnList);
+        assertEquals(filledDF.toString(), copyFilled.toString());
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingColumns(L label) retourne un dataFrame
+    //s'il y a des indices correcte et d'autres non
+    @Test
+    public void testSelectWrongLabelOnDataFrame() throws Exception {
+        List<String> columnList = List.of("colonne1", "colonneB");
+        DataFrame<String, String, Object> df = filledDF.constructNewDataFrameWithSelectingColumns(columnList);
+
+        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label2 = List.of("colonne1");
+        List<List<Integer>> values2 = List.of(
+                List.of(1, 2, 3)
+        );
+
+        DataFrame<String, String, Integer> copyofFilleDF = new DataFrame<>(index2, label2, values2);
+
+        assertEquals(copyofFilleDF.toString(), df.toString());
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingColumns(L label) retourne null
+    //s'il n'y a pas d'indice correcte à copier
+    @Test
+    public void testSelectAllWrongLabelOnDataFrame() throws Exception {
+        List<String> columnList = List.of("ColonneA", "ColonneB");
+        DataFrame<String, String, Object> nullDF = filledDF.constructNewDataFrameWithSelectingColumns(columnList);
+        assertNull(nullDF);
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingColumns(L label) retourne null
+    //si le dataFrame où copier les labels est vide
+    @Test
+    public void testSelectLabelOnEmptyDataFrame() throws Exception {
+        List<String> columnList = List.of("ColonneA", "ColonneB");
+        DataFrame<String, String, Object> nullDF = voidDF.constructNewDataFrameWithSelectingColumns(columnList);
+        assertNull(nullDF);
+    }
+
+
+
+        /*Tests sur la sélection avancée d'après un interval */
+
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max)
+    // retourne le même dataFrame si le dataFrame où sélectionner des valeurs dans l'intervalle [min;max] si toutes les
+    // valeurs sont dans l'intervalle
+    @Test
+    public void testSelectIntervalLabelOnDataFrame() throws Exception {
+        DataFrame<String, String, Object> copyFilled = filledDF.constructNewDataFrameWithSelectingValuesOfColumns("colonne1",0,5);
+        assertEquals(filledDF.toString(), copyFilled.toString());
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max)
+    // retourne seulement les lignes du dataFrame où kes valeurs du label sont dans l'intervalle [min;max]
+    @Test
+    public void testSelectIntervalWith1ResOnDataFrame() throws Exception {
+
+        DataFrame<String, String, Object> df = filledDF.constructNewDataFrameWithSelectingValuesOfColumns("colonne1",1,1);
+
+        List<String> index2 = List.of("ligne1");
+        List<String> label2 = List.of("colonne1", "colonne2", "colonne3", "colonne4");
+        List<List<Object>> values2 = List.of(
+                List.of(1),
+                List.of("I'm toto"),
+                List.of('a'),
+                List.of(true)
+        );
+
+        DataFrame<String, String, Object> copyofFilleDF = new DataFrame<>(index2, label2, values2);
+
+        assertEquals(copyofFilleDF.toString(), df.toString());
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max)
+    // retourne null si le dataFrame où sélectionner des valeurs dans l'intervalle [min;max] ne contient pas de valeur
+    // dans cet intervalle
+    @Test
+    public void testSelectIntervalWithNoResultOnDataFrame() throws Exception {
+        DataFrame<String, String, Object> nullDF = filledDF.constructNewDataFrameWithSelectingValuesOfColumns("Colonne1",0,0);
+        assertNull(nullDF);
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max)
+    // retourne null si le label passé en paramètre ne correspond pas à un label du dataFrame
+    @Test
+    public void testSelectIntervalWithWrongLabelOnDataFrame() throws Exception {
+        DataFrame<String, String, Object> nullDF = filledDF.constructNewDataFrameWithSelectingValuesOfColumns("ColonneA",0,0);
+        assertNull(nullDF);
+    }
+
+    //Ce test vérifie que la fonction constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max)
+    // retourne null si le dataFrame où sélectionner des valeurs dans l'intervalle [min;max] est vide
+    @Test
+    public void testSelectIntervalOnEmptyDataFrame() throws Exception {
+        DataFrame<String, String, Object> nullDF = voidDF.constructNewDataFrameWithSelectingValuesOfColumns("ColonneA", 0,0);
+        assertNull(nullDF);
+    }
+
 }
