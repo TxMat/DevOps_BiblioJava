@@ -1,4 +1,4 @@
-//package main.java;
+package main.java;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,13 +13,14 @@ public class DataFrame<K, L, V> {
     private Map<L, Map<K, V>> dataFrame = new LinkedHashMap<>();
 
     /**
-     * Creates a dataFrame with initial indexes, labels and values
+     * Creates a dataFrame with initial indexes, labels and values. If those lists are empty, the dataFrame will remain
+     * empty.
      *
      * @param index List of indexes representing rows of the dataFrame.
      * @param label List of labels representing columns of the dataFrame.
      * @param values List containing lists of Objects. Each list contains data of one column and then must have the same type. However, two lists can have different type.
-     * @throws Exception If number of indexes does not match Si le nombre d'indices ne correspond pas au nombre de lignes de valeurs,
-     *                   ou si le nombre de valeurs dans une ligne ne correspond pas au nombre de labels.
+     * @throws Exception If the size of indexes list does not match the size of sublists in values list or if the
+     * size of labels list does not match the size of values list, the method will throw IndexOutOfBoundsExecption().
      */
     public DataFrame(List<K> index, List<L> label, List<List<V>> values) throws Exception {
 
@@ -56,14 +57,20 @@ public class DataFrame<K, L, V> {
             /* ************ AFFICHAGE *******/
 
     /**
-     * Returns a textual representation of the dataFrame in the form of a two-dimensional array where each row is
-     * displayed with its index and each column with its label.
+     * Returns a string representation of the dataFrame in the form of a two-dimensional array where each row is
+     * displayed with its index and each column with its label. The method will return an empty string if the
+     * dataFrame is empty.
      *
      * @return Returns a string representation of the dataFrame.
      */
     //TODO: Aligner les valeurs avec les colonnes
     @Override
     public String toString() {
+
+        if (dataFrame.isEmpty()){
+            return "";
+        }
+
         StringBuilder res = new StringBuilder();
 
         // On ajoute les labels
@@ -88,8 +95,8 @@ public class DataFrame<K, L, V> {
 
     /**
      * Returns a string representation of the nbLinesToWrite first rows of the dataFrame. If the number of rows to
-     * display is zero or lower, the method will return an empty string. If it's larger than the actual number of
-     * rows in the dataFrame, it will display all the dataFrame.
+     * display is zero or lower or if the dataFrame is empty, the method will return an empty string. If it's larger
+     * than the actual number of rows in the dataFrame, it will display all the dataFrame.
      *
      * @param nbLinesToWrite The number of rows to display
      * @return Returns a string representation of the nbLinesToWrite first rows of the dataFrame.
@@ -97,13 +104,14 @@ public class DataFrame<K, L, V> {
     public String toStringFirstXElements(int nbLinesToWrite){
 
         // rien a ecrire
-        if (nbLinesToWrite <= 0){
+        if (nbLinesToWrite <= 0 || dataFrame.isEmpty()){
             return "";
         }
 
         StringBuilder res = new StringBuilder();
 
         // On ajoute les labels
+        res.append("X\t");
         for (L label : dataFrame.keySet()) {
             res.append(label).append("\t");
         }
@@ -127,6 +135,50 @@ public class DataFrame<K, L, V> {
 
         return res.toString();
     }
+
+    /**
+     * Returns a string representation of the nbLinesToWrite last rows of the dataFrame. If the number of rows to
+     * display is zero or lower or if the dataFrame is empty, the method will return an empty string. If it's larger
+     * than the actual number of rows in the dataFrame, it will display all the dataFrame.
+     *
+     * @param nbLinesToWrite The number of rows to display
+     * @return Returns a string representation of the nbLinesToWrite last rows of the dataFrame.
+     */
+    public String toStringLastXElements(int nbLinesToWrite){
+
+        // rien a ecrire
+        if (nbLinesToWrite <= 0 || dataFrame.isEmpty()){
+            return "";
+        }
+
+        StringBuilder res = new StringBuilder();
+
+        // On ajoute les labels
+        res.append("X\t");
+        for (L label : dataFrame.keySet()) {
+            res.append(label).append("\t");
+        }
+        res.append("\n");
+
+        int nbTotalRows = dataFrame.values().iterator().next().keySet().size();
+        int startIndex = nbTotalRows - nbLinesToWrite;
+
+        int currentIndex = 0;
+        for (K row : dataFrame.values().iterator().next().keySet()) {
+            if (currentIndex >= startIndex){
+                res.append(row).append("\t");   // ajout de l'index
+                for (Map<K, V> columnValue : dataFrame.values()) {  // ajout des valeurs
+                    V value = columnValue.get(row);
+                    res.append(value).append("\t");
+                }
+                res.append("\n");
+            }
+            currentIndex++;
+        }
+
+        return res.toString();
+    }
+
 
             /* ************ STATISTIQUES *******/
 
@@ -490,7 +542,15 @@ public class DataFrame<K, L, V> {
                 List.of('a', 'b', 'c'));
 
         DataFrame<String, String, Object> df = new DataFrame<>(index, label, values);
-        System.out.println(df.toStringFirstXElements(2));
+        System.out.println(df.toString() + "\n");
+        System.out.println(df.toStringLastXElements(2));
+        System.out.format("%5d", 25);
+
+        List<String> index1 = List.of();
+        List<String> label1 = List.of();
+        List<List<Object>> values1 = List.of();
+        DataFrame <String, String, Object> voidDF = new DataFrame<>(index1, label1, values1);
+        System.out.println(voidDF.toString());
 
 /*        System.out.println(df.getMin("colonne3"));
         System.out.println(df.getMax("colonne3"));
