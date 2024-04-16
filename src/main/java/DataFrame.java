@@ -1,5 +1,6 @@
 package main.java;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class DataFrame<K, L, V> {
         }
     }
 
-            /************* AFFICHAGE *******/
+            /* ************ AFFICHAGE *******/
 
     /**
      * Returns a textual representation of the dataFrame in the form of a two-dimensional array where each row is
@@ -86,7 +87,7 @@ public class DataFrame<K, L, V> {
     }
 
 
-            /************* STATISTIQUES *******/
+            /* ************ STATISTIQUES *******/
 
 
     /**
@@ -297,9 +298,144 @@ public class DataFrame<K, L, V> {
         return count;
     }
 
+            /* *************** SELECTION ******/
+
+    /**
+     * Create a new DataFrame from the current object DataFrame by selecting lines with the parameter indexList.
+     *
+     * @param indexList A list of index to add to the new DataFrame.
+     * @return A new DataFrame with index of indexList which are in the current object DataFrame.
+     *         Return null if the current Object DataFrame is empty or if the list of parameter is empty
+     *         or if none of the index of the indexList are in the current Object DataFrame.
+     * @throws Exception If number of indexes does not match
+     */
+    public DataFrame<K, L, V> constructNewDataFrameWithSelectingRows(List<K> indexList) throws Exception {
+
+        if(dataFrame.isEmpty() || indexList.isEmpty()){
+            return null;
+        }
+
+        List<K> newListIndex = new ArrayList<>();
+        List<L> newListLabel = new ArrayList<>();
+        List<List<V>> newListValues = new ArrayList<>();
+
+        //parcours de tout le dataframe
+        for (Map.Entry<L, Map<K, V>> column : dataFrame.entrySet()) {
+
+            List<V> value = new ArrayList<>();
+
+            newListLabel.add(column.getKey());
+
+            for(K index : indexList){
+                if(column.getValue().containsKey(index)){
+                    value.add(column.getValue().get(index));
+                    if(!newListIndex.contains(index)){
+                        newListIndex.add(index);
+                    }
+                }
+            }
+            newListValues.add(value);
+        }
+
+        if(newListIndex.isEmpty()){
+            return null;
+        }
+
+        return new DataFrame<>(newListIndex, newListLabel, newListValues);
+    }
 
 
-            /************* MAIN *******/
+    /**
+     * Create a new DataFrame from the current object DataFrame by selecting lines with the parameter indexList.
+     *
+     * @param labelList A list of labels to add to the new DataFrame.
+     * @return A new DataFrame with label of labelList which are in the current object DataFrame.
+     *         Return null if the current Object DataFrame is empty or if the list in parameter is empty
+     *         or if none of the labels of the labelList are in the current Object DataFrame.
+     * @throws Exception If number of indexes does not match
+     */
+    public DataFrame<K, L, V> constructNewDataFrameWithSelectingColumns(List<L> labelList) throws Exception {
+        if(dataFrame.isEmpty() || labelList.isEmpty()){
+            return null;
+        }
+
+        List<K> newListIndex = new ArrayList<>();
+        List<L> newListLabel = new ArrayList<>();
+        List<List<V>> newListValues = new ArrayList<>();
+
+        //pour remplir les labels une seule fois
+        boolean isLabel = false;
+
+        //parcours de tout le dataframe
+        for (Map.Entry<L, Map<K, V>> column : dataFrame.entrySet()) {
+
+            if(labelList.contains(column.getKey())){
+                newListLabel.add(column.getKey());
+                List<V> values = new ArrayList<>();
+
+                //parcours de toutes les valeurs de la ligne
+                for(Map.Entry<K,V> label : column.getValue().entrySet()){
+                    if(!isLabel){ //si labels non remplis
+                        newListIndex.add(label.getKey());
+                    }
+                    values.add(label.getValue());
+                }
+
+                newListValues.add(values);
+                isLabel = true;
+            }
+        }
+
+        if(newListIndex.isEmpty()){
+            return null;
+        }
+
+        return new DataFrame<>(newListIndex, newListLabel, newListValues);
+    }
+
+    /**
+     * Create a new DataFrame from the current object DataFrame by selecting lines which the values of the column label
+     * are in the interval.
+     *
+     * @param label A label where the selection is applied.
+     * @param min the lower bound for the interval.
+     * @param max the upper bound for the interval.
+     * @return A new DataFrame with selecting lines where column are in the interval of the current object DataFrame.
+     *         Return null if the current Object DataFrame is empty or if the list in parameter is empty
+     *         or if none of the value of the label are in the interval of the current Object DataFrame.
+     * @throws Exception If number of indexes does not match
+     */
+    public DataFrame<K, L, V> constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max) throws Exception {
+        if(dataFrame.isEmpty() || dataFrame.get(label) == null || dataFrame.get(label).isEmpty()){
+            return null;
+        }
+
+        List<K> newListIndex = new ArrayList<>();
+
+        //parcours de tout le dataframe
+        for (Map.Entry<L, Map<K, V>> column : dataFrame.entrySet()) {
+
+            //parcours de toutes les valeurs de la ligne
+            for(Map.Entry<K,V> currentLabel : column.getValue().entrySet()){
+                if(column.getKey().equals(label) && (currentLabel.getValue() instanceof Number)){
+                    double value = ((Number) currentLabel.getValue()).doubleValue();
+                    if(min <= value && value <= max){
+                        newListIndex.add(currentLabel.getKey());
+                    }
+                }
+            }
+        }
+
+        if(newListIndex.isEmpty()){
+            return null;
+        } else {
+            return constructNewDataFrameWithSelectingRows(newListIndex);
+        }
+    }
+
+
+
+            /* ************ MAIN *******/
 
     public static void main(String[] args) throws Exception {
         List<String> index = List.of("ligne1", "ligne2");
