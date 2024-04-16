@@ -1,4 +1,4 @@
-package main.java;
+//package main.java;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -86,6 +86,47 @@ public class DataFrame<K, L, V> {
         return res.toString();
     }
 
+    /**
+     * Returns a string representation of the nbLinesToWrite first rows of the dataFrame. If the number of rows to
+     * display is zero or lower, the method will return an empty string. If it's larger than the actual number of
+     * rows in the dataFrame, it will display all the dataFrame.
+     *
+     * @param nbLinesToWrite The number of rows to display
+     * @return Returns a string representation of the nbLinesToWrite first rows of the dataFrame.
+     */
+    public String toStringFirstXElements(int nbLinesToWrite){
+
+        // rien a ecrire
+        if (nbLinesToWrite <= 0){
+            return "";
+        }
+
+        StringBuilder res = new StringBuilder();
+
+        // On ajoute les labels
+        for (L label : dataFrame.keySet()) {
+            res.append(label).append("\t");
+        }
+        res.append("\n");
+
+        // Puis on ajoute les nbLinesToWrite lignes
+        int countRows = 0;
+        for (K row : dataFrame.values().iterator().next().keySet()) {
+            if (countRows >= nbLinesToWrite){
+                break;
+            }
+
+            res.append(row).append("\t");   // ajout de l'index
+            for (Map<K, V> columnValue : dataFrame.values()) {  // ajout des valeurs
+                V value = columnValue.get(row);
+                res.append(value).append("\t");
+            }
+            res.append("\n");
+            countRows++;
+        }
+
+        return res.toString();
+    }
 
             /* ************ STATISTIQUES *******/
 
@@ -438,26 +479,26 @@ public class DataFrame<K, L, V> {
             /* ************ MAIN *******/
 
     public static void main(String[] args) throws Exception {
-        List<String> index = List.of("ligne1", "ligne2");
-        List<String> label = List.of("Colonne1", "Colonne2", "colonne3", "colonne4");
+        List<String> index = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label = List.of("colonne1", "colonne2", "colonne3", "colonne4");
 
         /* Chaque sous-listes represente les valeurs d'une colonne */
         List<List<Object>> values = List.of(
-                List.of(-1, 2),
-                List.of(3.1, 4.2),
-                List.of("Hello World", "Goodbye World"),
-                List.of('a', 'b'));
+                List.of(-1, 2, 3),
+                List.of(3.1, 4.2, 5.3),
+                List.of("Hello World", "Goodbye World", "truc"),
+                List.of('a', 'b', 'c'));
 
         DataFrame<String, String, Object> df = new DataFrame<>(index, label, values);
-        System.out.println(df.toString());
+        System.out.println(df.toStringFirstXElements(2));
 
-        System.out.println(df.getMin("colonne3"));
+/*        System.out.println(df.getMin("colonne3"));
         System.out.println(df.getMax("colonne3"));
         System.out.println(df.getAverage("colonne3"));
         System.out.println(df.getCount("colonne3"));
         System.out.println(df.getSum("colonne3"));
         System.out.println(df.getAbsolute("colonne3"));
-        System.out.println(df.getProduct("colonne3"));
+        System.out.println(df.getProduct("colonne3"));*/
         
     }
 
