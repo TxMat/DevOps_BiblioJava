@@ -26,10 +26,12 @@ public class TestDataFrame {
 
 
         List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
-        List<String> label2 = List.of("colonne1", "colonne2");
+        List<String> label2 = List.of("colonne1", "colonne2", "colonne3", "colonne4");
         List<List<Object>> values2 = List.of(
                 List.of(1, 2, 3),
-                List.of("I'm toto", "I'm tata", "I'm titi")
+                List.of("I'm toto", "I'm tata", "I'm titi"),
+                List.of('a', 'b', 'c'),
+                List.of(true, false, true)
         );
         filledDF = new DataFrame<>(index2, label2, values2);
     }
@@ -115,10 +117,12 @@ public class TestDataFrame {
     public void testCreateDataFrameWithSameIndex() throws Exception {
 
         List<String> index2 = List.of("ligne1", "ligne2", "ligne3", "ligne1");
-        List<String> label2 = List.of("colonne1", "colonne2");
+        List<String> label2 = List.of("colonne1", "colonne2", "colonne3", "colonne4");
         List<List<Object>> values2 = List.of(
                 List.of(9, 2, 3, 1),
-                List.of("I'm truc", "I'm tata", "I'm titi", "I'm toto")
+                List.of("I'm truc", "I'm tata", "I'm titi", "I'm toto"),
+                List.of('d', 'b', 'c', 'a'),
+                List.of(false, false, true, true)
         );
 
         dataFrame = new DataFrame<>(index2, label2, values2);
@@ -132,17 +136,18 @@ public class TestDataFrame {
     public void testCreateDataFrameWithSameLabel() throws Exception {
 
         List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
-        List<String> label2 = List.of("colonne1", "colonne2", "colonne2");
+        List<String> label2 = List.of("colonne1", "colonne2", "colonne2", "colonne3", "colonne4");
         List<List<Object>> values2 = List.of(
                 List.of(1, 2, 3),
                 List.of(1.2, 3.4, 5.6),
-                List.of("I'm toto", "I'm tata", "I'm titi")
+                List.of("I'm toto", "I'm tata", "I'm titi"),
+                List.of('a', 'b', 'c'),
+                List.of(true, false, true)
         );
         dataFrame = new DataFrame<>(index2, label2, values2);
 
         assertEquals(filledDF.toString(), dataFrame.toString());
     }
-
 
 
             /* Test sur les méthodes statistiques de DataFrame */
@@ -156,12 +161,117 @@ public class TestDataFrame {
         assertEquals(filledDF.getMin("colonne1"), min);
     }
 
+    //Ce test vérifie que la fonction getMin(L label) renvoie null car la colonne ne contient pas de nombre
+    @Test
+    public void testGetMinOnStringDataFrame(){
+        assertNull(filledDF.getMin("colonne2"));
+    }
+
+    //Ce test vérifie que la fonction getMin(L label) renvoie null car la colonne ne contient pas de nombre
+    @Test
+    public void testGetMinOnCharDataFrame(){
+
+        assertNull(filledDF.getMin("colonne3"));
+    }
+
+    //Ce test vérifie que la fonction getMin(L label) renvoie null car la colonne ne contient pas de nombre
+    @Test
+    public void testGetMinOnBoolDataFrame(){
+        assertNull(filledDF.getMin("colonne4"));
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie la valeur minimale même si elle est à la fin de la liste
+    @Test
+    public void testGetMinWithMinOnTheEndOfColumnDataFrame() throws Exception {
+
+        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label2 = List.of("colonne1");
+        List<List<Object>> values2 = List.of(
+                List.of(1, 2, -666)
+        );
+        dataFrame = new DataFrame<>(index2, label2, values2);
+
+        Integer min = -666;
+        assertEquals(dataFrame.getMin("colonne1"), min);
+    }
+
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie la valeur minimale même si elle est dupliquée
+    @Test
+    public void testGetMinWithDuplicateMinDataFrame() throws Exception {
+
+        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label2 = List.of("colonne1");
+        List<List<Object>> values2 = List.of(
+                List.of(-666, -666, 3)
+        );
+        dataFrame = new DataFrame<>(index2, label2, values2);
+
+        Integer min = -666;
+        assertEquals(dataFrame.getMin("colonne1"), min);
+    }
+
+        //Test sur le max
+
     //Ce test vérifie que la fonction getMax(L label) donne la valeur maximale du dataFrame de la colonne label
     @Test
     public void testGetMaxDataFrame(){
         Integer max = 3;
         assertEquals(filledDF.getMax("colonne1"), max);
     }
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie null car la colonne ne contient pas de nombre
+    @Test
+    public void testGetMaxOnStringDataFrame(){
+        assertNull(filledDF.getMax("colonne2"));
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie null car la colonne ne contient pas de nombre
+    @Test
+    public void testGetMaxOnCharDataFrame(){
+
+        assertNull(filledDF.getMax("colonne3"));
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie null car la colonne ne contient pas de nombre
+    @Test
+    public void testGetMaxOnBoolDataFrame(){
+        assertNull(filledDF.getMax("colonne4"));
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie la valeur maximale même si elle est à la fin de la liste
+    @Test
+    public void testGetMaxWithMaxOnTheEndOfColumnDataFrame() throws Exception {
+
+        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label2 = List.of("colonne1");
+        List<List<Object>> values2 = List.of(
+                List.of(1, 2, 666)
+        );
+        dataFrame = new DataFrame<>(index2, label2, values2);
+
+        Integer max = 666;
+        assertEquals(dataFrame.getMax("colonne1"), max);
+    }
+
+    //Ce test vérifie que la fonction getMax(L label) renvoie la valeur maximale même si elle est dupliquée
+    @Test
+    public void testGetMaxWithDuplicateMaxDataFrame() throws Exception {
+
+        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label2 = List.of("colonne1");
+        List<List<Object>> values2 = List.of(
+                List.of(666, 666, 3)
+        );
+        dataFrame = new DataFrame<>(index2, label2, values2);
+
+        Integer max = 666;
+        assertEquals(dataFrame.getMax("colonne1"), max);
+    }
+
+
+        //Tests sur les autres méthodes statistiques
+
 
     //Ce test vérifie que la fonction getAverage(L label) donne la valeur moyenne du dataFrame de la colonne label
     @Test
@@ -198,6 +308,145 @@ public class TestDataFrame {
         double product = 6;
         assertEquals(filledDF.getProduct("colonne1").doubleValue(), product, 0.0001);
     }
+
+        //test sur des colonnes non valide
+
+    //Ce test vérifie que la fonction getAverage(L label) sur une mauvaise colonne donne null
+    @Test
+    public void testGetAverageOnWrongColumnDataFrame(){
+        assertNull(filledDF.getAverage("colonneA"));
+    }
+
+    //Ce test vérifie que la fonction getCount(L label) sur une mauvaise colonne donne -1
+    @Test
+    public void testGetCountOnWrongColumnDataFrame(){
+        int count = -1;
+        assertEquals(filledDF.getCount("colonneA"), count);
+    }
+
+    //Ce test vérifie que la fonction getSum(L label) sur une mauvaise colonne donne null
+    @Test
+    public void testGetSumOnWrongColumnDataFrame(){
+        assertNull(filledDF.getSum("colonneA"));
+    }
+
+    //Ce test vérifie que la fonction getAbsolute(L label) sur une mauvaise colonne donne null
+    // du dataFrame de la colonne label
+    @Test
+    public void testAbsoluteMinOnWrongColumnDataFrame(){
+        assertNull(filledDF.getAbsolute("colonneA"));
+    }
+
+    //Ce test vérifie que la fonction getProduct(L label) sur une mauvaise colonne donne null
+    @Test
+    public void testGetProductOnWrongColumnDataFrame(){
+        assertNull(filledDF.getProduct("colonneA"));
+    }
+
+        //Test sur des String
+
+    //Ce test vérifie que la fonction getCount(L label) sur une colonne de String donne null
+    @Test
+    public void testGetAverageOnStringColumnDataFrame(){
+        assertNull(filledDF.getAverage("colonne2"));
+    }
+
+    //Ce test vérifie que la fonction getCount(L label) sur une colonne de String donne le bon résultat
+    @Test
+    public void testGetCountOnStringColumnDataFrame(){
+        int count = 3;
+        assertEquals(filledDF.getCount("colonne2"), count);
+    }
+
+    //Ce test vérifie que la fonction getSum(L label) sur une colonne de String donne null
+    @Test
+    public void testGetSumOnStringColumnDataFrame(){
+        assertNull(filledDF.getSum("colonne2"));
+    }
+
+    //Ce test vérifie que la fonction getAbsolute(L label) sur colonne de String donne null
+    // du dataFrame de la colonne label
+    @Test
+    public void testAbsoluteMinOnStringColumnDataFrame(){
+        assertNull(filledDF.getAbsolute("colonne2"));
+    }
+
+    //Ce test vérifie que la fonction getProduct(L label) sur une colonne de String donne null
+    @Test
+    public void testGetProductOnStringColumnDataFrame(){
+        assertNull(filledDF.getProduct("colonne2"));
+    }
+
+
+        //Test sur des char
+
+    //Ce test vérifie que la fonction getCount(L label) sur une colonne de char donne null
+    @Test
+    public void testGetAverageOnCharColumnDataFrame(){
+        assertNull(filledDF.getAverage("colonne3"));
+    }
+
+    //Ce test vérifie que la fonction getCount(L label) sur une colonne de char donne le bon résultat
+    @Test
+    public void testGetCountOnCharColumnDataFrame(){
+        int count = 3;
+        assertEquals(filledDF.getCount("colonne3"), count);
+    }
+
+    //Ce test vérifie que la fonction getSum(L label) sur une colonne de char donne null
+    @Test
+    public void testGetSumOnCharColumnDataFrame(){
+        assertNull(filledDF.getSum("colonne3"));
+    }
+
+    //Ce test vérifie que la fonction getAbsolute(L label) sur colonne de char donne null
+    // du dataFrame de la colonne label
+    @Test
+    public void testAbsoluteMinOnCharColumnDataFrame(){
+        assertNull(filledDF.getAbsolute("colonne3"));
+    }
+
+    //Ce test vérifie que la fonction getProduct(L label) sur une colonne de char donne null
+    @Test
+    public void testGetProductOnCharColumnDataFrame(){
+        assertNull(filledDF.getProduct("colonne3"));
+    }
+
+
+        //Test sur des boolean
+
+    //Ce test vérifie que la fonction getCount(L label) sur une colonne de Boolean donne null
+    @Test
+    public void testGetAverageOnBooleanColumnDataFrame(){
+        assertNull(filledDF.getAverage("colonne4"));
+    }
+
+    //Ce test vérifie que la fonction getCount(L label) sur une colonne de Boolean donne le bon résultat
+    @Test
+    public void testGetCountOnBooleanColumnDataFrame(){
+        int count = 3;
+        assertEquals(filledDF.getCount("colonne4"), count);
+    }
+
+    //Ce test vérifie que la fonction getSum(L label) sur une colonne de Boolean donne null
+    @Test
+    public void testGetSumOnBooleanColumnDataFrame(){
+        assertNull(filledDF.getSum("colonne4"));
+    }
+
+    //Ce test vérifie que la fonction getAbsolute(L label) sur colonne de Boolean donne null
+    // du dataFrame de la colonne label
+    @Test
+    public void testAbsoluteMinOnBooleanColumnDataFrame(){
+        assertNull(filledDF.getAbsolute("colonne4"));
+    }
+
+    //Ce test vérifie que la fonction getProduct(L label) sur une colonne de Boolean donne null
+    @Test
+    public void testGetProductOnBooleanColumnDataFrame(){
+        assertNull(filledDF.getProduct("colonne4"));
+    }
+
 
         /*Test sur voidDF */
 
@@ -244,6 +493,5 @@ public class TestDataFrame {
     public void testGetProductEmptyDataFrame(){
         assertNull(voidDF.getProduct("colonne1"));
     }
-
 
 }
