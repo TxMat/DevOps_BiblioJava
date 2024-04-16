@@ -4,30 +4,37 @@ import java.util.*;
 
 public class CSVParser<IndexType, LabelType, ValType> {
 
-    @Deprecated
-    public void parseCSV(Map<IndexType, Map<LabelType, ValType>> hashMap, String csvFileName, final char delimiter) throws FileNotFoundException, ClassCastException{
+
+    public Vector<Vector<?>> parseCSV(String csvFileName, final char delimiter) throws FileNotFoundException{
         Scanner csvScanner = new Scanner(new FileInputStream(csvFileName));
 
         Vector<IndexType> indexList = new Vector<>();
         Vector<LabelType> labelList = new Vector<>();
-        Vector<Object> valueList = new Vector<>();
+        Vector<Vector<Object>> valueList = new Vector<>();
 
 
         String columnName = csvScanner.nextLine();
 
-        //Sometimes the first column name may be empty, especially in two-dimensional arrays, we'll just shave of the delimiter
+        //Sometimes the first column name may be empty, especially in two-dimensional arrays, we'll just shave off the delimiter
         if (columnName.charAt(0) == delimiter){
             columnName = columnName.substring(1);
         }
 
         String[] columnNames = columnName.split(String.valueOf(delimiter));
+
         int columnCount = columnNames.length;
 
         for (String column : columnNames){
             if (column.isBlank()){
                 throw new IllegalArgumentException("CSV File contains an empty column");
             }
+            //TODO: Labels & Indexes are always String ?? In that case cast remove the cast
             labelList.add((LabelType) column);
+        }
+
+        //Add the lists containing the values. There should be as many lists as the number of columns
+        for (int i = 0; i < columnCount; i++) {
+            valueList.add(new Vector<Object>());
         }
 
         Vector<ValueType> valuesType = new Vector<ValueType>();
@@ -35,126 +42,82 @@ public class CSVParser<IndexType, LabelType, ValType> {
         //At this point we got the columns and they're valid
         //FIXME: This implies two-dimensional arrays, fix it for one-dimensional or make another function
         String line;
-        String indexName;
         String[] lines;
         String[] values;
+        String[] indexes;
         boolean firstIterationFlag = true;
 
         do{
-            Map<LabelType, Object> labelToValueHashMap = new LinkedHashMap<>();
             line = csvScanner.nextLine();
             lines = line.split(String.valueOf(delimiter));
             values = Arrays.copyOfRange(lines, lines.length-columnCount , lines.length);
+            indexes = Arrays.copyOfRange(lines, 0, (lines.length-columnCount));
 
-            //-1 to account for the index name
-            if ((lines.length-1) != columnCount){
-                throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + (lines.length-1));
+
+            //Check if the dimensions are correct:
+
+            //Throws if the dimension of values and labels are different
+            if (values.length != columnCount){
+                throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + values.length);
             }
 
-            for (int i = 0; i < lines.length; i++) {
-                //First we get the index name, this is NOT a value
-                if (i == 0){
-                    indexName = lines[0];
-                    indexList.add((IndexType) indexName);
-                    continue; //Nothing else to do
-                }
+            //FIXME: This may be dead code, inconsistent length of indexes implies different values length, thus throwing before reaching this
+            //TODO: Verify with tests
+            if (indexes.length == 0){
+                throw new IllegalArgumentException("Inconsistent number of columns, expected " + values.length + " got " + indexes.length);
+            }
 
 
-                // Then we get to the values
-                // If this is the first iteration (of the while), we have to determine the values type
-                // The values in the next lines have to be the same type as the value above them
+            //Check if the types are correct :
+            for (int i = 0; i < values.length; i++) {
                 if (firstIterationFlag){
-                    valuesType.add(findType(lines[i]));
+                    valuesType.add(findType(values[i]));
                 }else{
-                    // Else we check the type of every value, -1 to account for the index names
-                    if (! checkType(valuesType.get(i-1), values[i-1])){
-                        throw new IllegalArgumentException("The value " + lines[i] + "has unexpected type, expected type was" + valuesType.get(i-1));
+                    // Else we check the type of every value
+                    if (! checkType(valuesType.get(i), values[i])){
+                        throw new IllegalArgumentException("The value " + values[i] + " has unexpected type, expected type was " + valuesType.get(i));
                     }
                 }
+            }
 
-                //labelToValueHashMap.put((LabelType) lines[i], values[i]);
-                //TODO: Add (columnName[i(+1 ??)], value) to the Map<Label, Value>
+
+            //Append the indexes
+            for (String index : indexes){
+                indexList.add((IndexType) index);
+            }
+
+            for (int i = 0; i < values.length; i++) {
+                switch (valuesType.get(i)){
+                    case STRING:
+                        valueList.get(i).add((String) values[i]);
+                        break;
+                    case INTEGER:
+                        valueList.get(i).add(Integer.parseInt(values[i]));
+                        break;
+                    case DOUBLE:
+                        valueList.get(i).add(Double.parseDouble(values[i]));
+                        break;
+                    case BOOLEAN:
+                        valueList.get(i).add(Boolean.valueOf(values[i]));
+                        break;
+                    default:
+                        System.err.println("Forgot to add cases for the type " + valuesType.get(i));
+                        System.err.println("Defaulting to String");
+                        valueList.get(i).add((String) values[i]);
+                        break;
+                }
             }
 
             firstIterationFlag = false;
 
         }while(csvScanner.hasNextLine());
 
-    }
+        Vector<Vector<?>> resultVector = new Vector<>();
+        resultVector.add(indexList);
+        resultVector.add(labelList);
+        resultVector.add(valueList);
 
-    @Deprecated
-    public Map<IndexType, Map<LabelType, ValType>> parseCSV_NoDynamicType(Map<IndexType, Map<LabelType, ValType>> hashMap, String csvFileName, final char delimiter) throws FileNotFoundException, ClassCastException{
-        Scanner csvScanner = new Scanner(new FileInputStream(csvFileName));
-
-        Vector<IndexType> indexList = new Vector<>();
-        Vector<LabelType> labelList = new Vector<>();
-        Vector<Vector<ValType>> valueList = new Vector<>();
-
-        String columnName = csvScanner.nextLine();
-
-        //Sometimes the first column name may be empty, especially in two-dimensional arrays, we'll just shave of the delimiter
-        if (columnName.charAt(0) == delimiter){
-            columnName = columnName.substring(1);
-        }
-
-        String[] columnNames = columnName.split(String.valueOf(delimiter));
-        int columnCount = columnNames.length;
-
-        for (String column : columnNames){
-            if (column.isBlank()){
-                throw new IllegalArgumentException("CSV File contains an empty column");
-            }
-            valueList.add(new Vector<ValType>());
-            labelList.add((LabelType) column);
-        }
-
-        String line;
-        String[] lines;
-        ValType[] values;
-
-
-        do{
-            line = csvScanner.nextLine();
-            int indexCount = 0, valueCount = 0;
-            lines = line.split(String.valueOf(delimiter));
-            values = (ValType[]) new Object[columnCount];
-
-
-            //Get the values of the current line
-            for (int valueIndex = lines.length - columnCount, idx = 0; valueIndex <= columnCount; valueIndex++, idx++) {
-                values[idx] = (ValType) lines[valueIndex];
-            }
-
-
-            for (int idx = 0; idx < lines.length; idx++) {
-                if (idx < lines.length-columnCount){
-                    //We are in the index;
-                    indexCount++;
-                    indexList.add((IndexType) lines[idx]);
-                }else{
-                    //We are in the values
-                    valueCount++;
-                    valueList.get(idx-indexCount).add((ValType) lines[idx]);
-                }
-            }
-
-            if (valueCount != columnCount){
-                throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + (lines.length-columnCount));
-            }
-
-        }while(csvScanner.hasNextLine());
-
-        for (int i = 0; i < indexList.size(); i++) {
-            Vector<ValType> value = valueList.get(i);
-
-            Map<LabelType, ValType> currentColumn = new LinkedHashMap<>();
-            for (int j = 0; j < labelList.size(); j++) {
-                currentColumn.put(labelList.get(j), value.get(j));
-            }
-            hashMap.put(indexList.get(i), currentColumn);
-        }
-        System.out.println("Success???");
-        return hashMap;
+        return resultVector;
     }
 
 
@@ -178,11 +141,19 @@ public class CSVParser<IndexType, LabelType, ValType> {
             return ValueType.DOUBLE;
         }catch (NumberFormatException ignored){};
 
+        //Built-in boolean parser is different, returns false if value is different than "true", ignoring case
+        //So we make our own parser
+        if ((value.equalsIgnoreCase("true")) || (value.equalsIgnoreCase("false"))){
+            return ValueType.BOOLEAN;
+        }
+
         //We default to String if other types are not supported
         return ValueType.STRING;
     }
 
 
+    //FIXME: If the value is a String that is either "true" or "false", it will false-negative
+    //Potential fix : Be permissive and return ((valuesType == ValueType.BOOLEAN) || (valuesType == valueType.STRING))
     private static boolean checkType(ValueType valuesType, String value){
 
         try{
@@ -194,6 +165,11 @@ public class CSVParser<IndexType, LabelType, ValType> {
             Double.parseDouble(value);
             return valuesType == ValueType.DOUBLE;
         }catch (NumberFormatException ignored){}
+
+
+        if ((value.equalsIgnoreCase("true")) || (value.equalsIgnoreCase("false"))){
+            return valuesType == ValueType.BOOLEAN;
+        }
 
         return valuesType == ValueType.STRING;
     }
