@@ -16,5 +16,5 @@ on:
 
 jobs:
   call_another:
-    uses: ./.github/workflows/ga.yml@gitActions
+    uses: ./.github/workflows/ga.yml
     secrets: inherit
