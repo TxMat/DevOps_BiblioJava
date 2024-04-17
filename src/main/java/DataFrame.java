@@ -601,37 +601,4 @@ public class DataFrame<K, L, V> {
         }
     }
 
-
-
-            /* ************ MAIN *******/
-
-    public static void main(String[] args) throws Exception {
-        List<String> index = List.of("ligne1", "ligne2", "ligneaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3");
-        List<String> label = List.of("colonne1", "colonne2", "colonne3", "colonne4");
-
-        // Chaque sous-listes represente les valeurs d'une colonne
-        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
-        List<String> label2 = List.of("colonne1", "colonne2", "colonne3", "colonne4");
-        List<List<Object>> values2 = List.of(
-                List.of(1, 2, 3),
-                List.of("I'm toto", "I'm tata", "I'm titi"),
-                List.of('a', 'b', 'c'),
-                List.of(true, false, true)
-        );
-
-        DataFrame<String, String, Object> df = new DataFrame<>(index2, label2, values2);
-        System.out.println(df.toString() + "\n");
-        System.out.println(df.toStringFirstXElements(2));
-        System.out.println(df.toStringLastXElements(2));
-
-/*        System.out.println(df.getMin("colonne3"));
-        System.out.println(df.getMax("colonne3"));
-        System.out.println(df.getAverage("colonne3"));
-        System.out.println(df.getCount("colonne3"));
-        System.out.println(df.getSum("colonne3"));
-        System.out.println(df.getAbsolute("colonne3"));
-        System.out.println(df.getProduct("colonne3"));*/
-
-    }
-
 }
