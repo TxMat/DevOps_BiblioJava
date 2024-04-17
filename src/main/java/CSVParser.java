@@ -27,12 +27,16 @@ public class CSVParser<IndexType, LabelType> {
         //Parse the first line, containing the columns name
         String columnName = csvScanner.nextLine();
 
-        if (! columnName.contains(String.valueOf(delimiter))){
+        boolean onlyOneColumnFlag = (columnName.split(String.valueOf(delimiter)).length == 1);
+        boolean onlyOneLineFlag = (! csvScanner.hasNextLine());
+
+        //Band-aid fix for CSV with one column dimension
+        if ((! columnName.contains(String.valueOf(delimiter))) && (!onlyOneColumnFlag)){
             throw new IllegalArgumentException("The CSV doesn't contains the delimiter \"" + delimiter + "\"");
         }
 
-        boolean onlyOneLineFlag = (! csvScanner.hasNextLine());
 
+        //This is bad, need to refractor this
         if (onlyOneLineFlag){
             String[] line;
             String[] values;
@@ -107,7 +111,7 @@ public class CSVParser<IndexType, LabelType> {
         String line;
         String[] lines;
         String[] values;
-        String[] indexes;
+        String[] indexes = new String[0]; //Initialize just to comply with the compiler, doesn't matter
 
         long fieldsCount = 0;
         boolean firstIterationFlag = true;
@@ -116,11 +120,14 @@ public class CSVParser<IndexType, LabelType> {
             line = csvScanner.nextLine();
             lines = line.split(String.valueOf(delimiter));
             values = Arrays.copyOfRange(lines, lines.length - columnCount, lines.length);
-            indexes = Arrays.copyOfRange(lines, 0, (lines.length - columnCount));
+
+            if (! onlyOneColumnFlag) {
+                indexes = Arrays.copyOfRange(lines, 0, (lines.length - columnCount));
+            }
 
             //Count the number of field separated by the delimiter, throw if it's not the same as the number of columns
             fieldsCount = line.chars().filter(ch -> ch == delimiter).count();
-            if (columnCount != fieldsCount){
+            if ((columnCount != fieldsCount) && (!onlyOneColumnFlag)){
                 throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + fieldsCount);
             }
 
@@ -137,7 +144,12 @@ public class CSVParser<IndexType, LabelType> {
                 }
             }
 
-            this.appendIndexes(indexList, indexes);
+            if (! onlyOneColumnFlag) {
+                this.appendIndexes(indexList, indexes);
+            }else{
+                //Same case whe there's no labels. We still need to have some labels on the DataFrame so we add the empty string
+                this.appendIndexes(indexList, new String[]{""});
+            }
 
             this.appendValues(valueList, valuesType, values);
 
