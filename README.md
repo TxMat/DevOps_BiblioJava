@@ -16,29 +16,14 @@ Le but de ce projet est de fournir en Java une partie des fonctionnalités offer
 Nous fournissons plusieurs fonctionnalités dans notre bibliothèque; ci-dessus la liste de ces fonctionnalités.
 
 * Création d'un dataFrame
-
-(TODO)
-
-* Affichage d'un dataFrame
-
-(TODO)
-
-* Séléction dans un dataFrame
-
-(TODO)
-
-* Statistiques sur un dataFrame
-
-(TODO)
-
-Création : 
-
+* 
 Nous fournissons deux méthodes pour créer un nouveau DataFrame :
 
     -DataFrame(List<K> index, List<L> label, List<List<V>> values) : construit un Dataframe à partir de listes d'index, de label et de liste de valeurs.
     -TO DO DATAFRAME CSV
 
-Affichage : 
+* Affichage d'un dataFrame
+
 
 Nous fournissons plusieurs méthodes permettant d'afficher un DataFrame :
 
@@ -46,9 +31,7 @@ Nous fournissons plusieurs méthodes permettant d'afficher un DataFrame :
     -toStringFirstXElements(int nbLinesToWrite) : Affiche seulement les nbLinesToWrite premières lignes.
     -toStringLastXElements(int nbLinesToWrite) : Affiche seulement les nbLinesToWrite dernières lignes.
 
-
-
-Sélection :
+* Séléction dans un dataFrame
 
 Nous fournissons plusieurs méthodes permettant de construire un nouveau DataFrame en sélectionnant des lignes et colonnes :
 
@@ -56,7 +39,7 @@ Nous fournissons plusieurs méthodes permettant de construire un nouveau DataFra
     - constructNewDataFrameWithSelectingColumns(List<K> labelList) : crée un nouveau Dataframe en sélectionnant uniquement les colonnes ayant leur label dans la liste de label passé en paramétre.
     - constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max) : crée un nouveau DataFrame en sélectionnant uniquement les lignes où la valeur de la colonne passé en paramètre est dans l'intervalle des paramètres [min; max].
 
-Statistiques :
+* Statistiques sur un dataFrame
 
 Nous fournissons plusieurs méthodes pour effectuer des statistiques sur une colonne d'un Dataframe :
 
