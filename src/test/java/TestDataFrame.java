@@ -1,8 +1,8 @@
 package test.java;
 
 import static org.junit.Assert.*;
-import main.java.DataFrame;
 
+import main.java.DataFrame;
 import java.util.List;
 
 import org.junit.Before;

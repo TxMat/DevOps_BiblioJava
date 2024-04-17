@@ -2,6 +2,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
+import main.java.DataFrame;
 
 /**
  * These tests only check if the parsing handles errors correctly, they do <b>NOT</b> check for the correctness of the DataFrame.
