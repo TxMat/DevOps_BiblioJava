@@ -6,30 +6,15 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: Workflow branche gA
 
 on:
-  push:
-    branches: [ "gitActions" ]
-  pull_request:
-    branches: [ "gitActions" ]
   workflow_call:
-    inputs:
-      config-path:
-        required: true
-        type: string
     secrets:
       token:
         required: true
 
 jobs:
-  triage:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/labeler@v4
-      with:
-        repo-token: ${{ secrets.token }}
-        configuration-path: ${{ inputs.config-path }}
   test-and-coverage:
 
     runs-on: ubuntu-latest
