@@ -1,5 +1,9 @@
 ![test badge](https://github.com/BastienLevasseur/DevOps_BiblioJava/actions/workflows/maven.yml/badge.svg)
 
+Coverage : 
+![jacoco badge](.github/badges/jacoco.svg)
+![jacoco badge branch](.github/badges/branches.svg)
+
 Documentation à partir de la branche develop
 
 
