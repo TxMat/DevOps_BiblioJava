@@ -31,6 +31,49 @@ Nous fournissons plusieurs fonctionnalités dans notre bibliothèque; ci-dessus 
 
 (TODO)
 
+Création : 
+
+Nous fournissons deux méthodes pour créer un nouveau DataFrame :
+
+    -DataFrame(List<K> index, List<L> label, List<List<V>> values) : construit un Dataframe à partir de listes d'index, de label et de liste de valeurs.
+    -TO DO DATAFRAME CSV
+
+Affichage : 
+
+Nous fournissons plusieurs méthodes permettant d'afficher un DataFrame :
+
+    -toString : Affiche tout le contenu d'un DataFrame
+    -toStringFirstXElements(int nbLinesToWrite) : Affiche seulement les nbLinesToWrite premières lignes.
+    -toStringLastXElements(int nbLinesToWrite) : Affiche seulement les nbLinesToWrite dernières lignes.
+
+
+
+Sélection :
+
+Nous fournissons plusieurs méthodes permettant de construire un nouveau DataFrame en sélectionnant des lignes et colonnes :
+
+    - constructNewDataFrameWithSelectingRows(List<K> indexList) : crée un nouveau Dataframe en sélectionnant uniquement les lignes ayant leur index dans la liste d'index passé en paramétre.
+    - constructNewDataFrameWithSelectingColumns(List<K> labelList) : crée un nouveau Dataframe en sélectionnant uniquement les colonnes ayant leur label dans la liste de label passé en paramétre.
+    - constructNewDataFrameWithSelectingValuesOfColumns(L label, double min, double max) : crée un nouveau DataFrame en sélectionnant uniquement les lignes où la valeur de la colonne passé en paramètre est dans l'intervalle des paramètres [min; max].
+
+Statistiques :
+
+Nous fournissons plusieurs méthodes pour effectuer des statistiques sur une colonne d'un Dataframe :
+
+Les méthodes suivantes s'appliquent uniquement à des colonnes comportants des nombres
+
+    - Trouver le minimum : getMin(L label)
+    - Trouver le maximum : getMax(L label)
+    - Calculer la moyenne : getAverage(L label)
+    - Calcler la somme : getSum(L label)
+    - Calculer la somme en valeur absolue : getAbsolute(L label)
+    - Calculer le produit : getProduct(L label)
+
+La méthode suivante s'applique à toutes les colonnes
+
+    - Compter le nombre de cases non vide : getCount(L label)
+
+
 
 
 ## Choix des outils
