@@ -643,6 +643,15 @@ public class DataFrame<K, L, V> {
     }
 
 
+    /**
+     * Check if two DataFrames are equal in value.<P>
+     * @param dataFrameCandidate The DataFrame to compare
+     * @return true if equal, false otherwise
+     */
+    public boolean equals(DataFrame<K,L,V> dataFrameCandidate){
+        //Juste besoin de vérifier si les Map sont équivalentes
+        return this.dataFrame.equals(dataFrameCandidate.dataFrame);
+    }
 
             /* ************ MAIN *******/
 
