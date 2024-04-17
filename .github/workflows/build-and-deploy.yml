@@ -1,4 +1,4 @@
-name: Java Test with Maven
+name: Deploy doc
 
 on: 
   push:
