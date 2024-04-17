@@ -4,6 +4,6 @@
 
 
 ![jacoco badge](.github/badges/jacoco.svg)
-
+![jacoco badge branch](.github/badges/branches.svg)
 
 Contenu du readme
