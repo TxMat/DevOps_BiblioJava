@@ -125,19 +125,6 @@ public class CSVParser<IndexType, LabelType> {
             }
 
 
-            //Check if the dimensions are correct:
-            //Throws if the dimension of values and labels are different
-            if (values.length != columnCount) {
-                throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + values.length);
-            }
-
-            //FIXME: This may be dead code, inconsistent length of indexes implies different values length, thus throwing before reaching this
-            //TODO: Verify with tests
-            if (indexes.length == 0) {
-                throw new IllegalArgumentException("Inconsistent number of columns, expected " + values.length + " got " + indexes.length);
-            }
-
-
             //Check if the types are correct :
             for (int i = 0; i < values.length; i++) {
                 if (firstIterationFlag) {
@@ -167,6 +154,11 @@ public class CSVParser<IndexType, LabelType> {
     }
 
 
+    /**
+     * Append the indexes on the index list of the DataFrame.
+     * @param indexList The index list of the DataFrame.
+     * @param indexes The indexes list parsed from the CSV.
+     */
     private void appendIndexes(Vector<IndexType> indexList, String[] indexes) {
         //Append the indexes
         for (String index : indexes) {
@@ -175,6 +167,12 @@ public class CSVParser<IndexType, LabelType> {
     }
 
 
+    /**
+     * Append the values on the value list of the DataFrame.
+     * @param valueList The value list of the DataFrame.
+     * @param valuesType The list containing the types of the values parsed.
+     * @param values The values list parsed from the CSV.
+     */
     private void appendValues(Vector<Vector<Object>> valueList, Vector<ValueType> valuesType, String[] values) {
         for (int i = 0; i < values.length; i++) {
             switch (valuesType.get(i)) {
@@ -190,6 +188,9 @@ public class CSVParser<IndexType, LabelType> {
                 case BOOLEAN:
                     valueList.get(i).add(Boolean.valueOf(values[i]));
                     break;
+                case DATE:
+                    valueList.get(i).add(LocalDate.parse(values[i]));
+                    break;
                 default:
                     System.err.println("Forgot to add cases for the type " + valuesType.get(i));
                     System.err.println("Defaulting to String");
@@ -199,8 +200,12 @@ public class CSVParser<IndexType, LabelType> {
         }
     }
 
-
-    //FIXME: Dirty? Maybe find another way?
+    /**
+     * Try to guess the type of the parsed value. <p>
+     * If no type can be determined, defaults to String.
+     * @param value The string representation of the value to guess the type.
+     * @return The type guessed.
+     */
     private static ValueType findType(String value){
 
         try{
@@ -219,11 +224,23 @@ public class CSVParser<IndexType, LabelType> {
             return ValueType.BOOLEAN;
         }
 
+        try{
+            LocalDate.parse(value);
+            return ValueType.DATE;
+        }catch (DateTimeException ignored){}
+
+
         //We default to String if other types are not supported
         return ValueType.STRING;
     }
 
 
+    /**
+     * Check if the type of the value is still the same type found previously (on the first line of the CSV).
+     * @param valuesType  The list containing the types of the values parsed.
+     * @param value The string representation of the value to guess the type.
+     * @return true if the type is the same, false otherwise.
+     */
     //FIXME: If the value is a String that is either "true" or "false", it will false-negative
     //Potential fix : Be permissive and return ((valuesType == ValueType.BOOLEAN) || (valuesType == valueType.STRING))
     private boolean checkType(ValueType valuesType, String value){
