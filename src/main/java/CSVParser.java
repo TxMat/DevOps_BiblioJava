@@ -1,19 +1,78 @@
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.util.*;
 
-public class CSVParser<IndexType, LabelType, ValType> {
+public class CSVParser<IndexType, LabelType> {
 
 
-    public Vector<Vector<?>> parseCSV(String csvFileName, final char delimiter) throws FileNotFoundException{
+    /**
+     * Parse a CSV File, checking for dimensions. <p>
+     * Some CSV uses quotes to wrap strings, these are currently not supported. <p>
+     * Not all types are supported, content will be defaulted to string if no alternative.
+     * @param csvFileName The CSV filename.
+     * @param delimiter The delimiter of the CSV.
+     * @return A vector containing 3 vectors, respectively list of index, labels and values.
+     * @throws FileNotFoundException Throws if the CSV File is not found.
+     * @throws IllegalArgumentException Throws if one dimension is incorrect.
+     */
+    public Vector<Vector<?>> parseCSV(String csvFileName, final char delimiter) throws FileNotFoundException, IllegalArgumentException {
         Scanner csvScanner = new Scanner(new FileInputStream(csvFileName));
 
         Vector<IndexType> indexList = new Vector<>();
         Vector<LabelType> labelList = new Vector<>();
         Vector<Vector<Object>> valueList = new Vector<>();
 
-
+        //Parse the first line, containing the columns name
         String columnName = csvScanner.nextLine();
+
+        boolean onlyOneLineFlag = (! csvScanner.hasNextLine());
+
+        if (onlyOneLineFlag){
+            String[] line;
+            String[] values;
+            String[] index; //If there's one line there's only one index
+
+            line = columnName.split(String.valueOf(delimiter));
+            values = Arrays.copyOfRange(line, 1, line.length);
+            index = Arrays.copyOfRange(line, 0, 1);
+
+            Vector<ValueType> valueType = new Vector<>();
+            for (String value : values){
+                valueType.add(findType(value));
+            }
+
+
+            for (int i = 0; i < values.length; i++) {
+                valueList.add(new Vector<Object>());
+            }
+
+            indexList.add((IndexType) index[0]);
+
+            appendValues(valueList, valueType, values);
+
+            //You can have a one dimensional CSV, like this "Ligne1;1;true;hello"
+            //But you can't have a one dimensional DataFrame
+            //We add an empty string for columns name
+
+            try{
+                for (int i = 0; i < values.length; i++) {
+                    labelList.add((LabelType) "");
+                }
+            }catch (ClassCastException castException){
+                //If one said that Labels are integer they (probably ?) can't be made from an empty string
+                //We'll just throw
+                throw new IllegalArgumentException("Cannot handle empty labels with the label given type, pass a String as a label type");
+            }
+
+            Vector<Vector<?>> resultVector = new Vector<>();
+            resultVector.add(indexList);
+            resultVector.add(labelList);
+            resultVector.add(valueList);
+
+            return resultVector;
+        }
 
         //Sometimes the first column name may be empty, especially in two-dimensional arrays, we'll just shave off the delimiter
         if (columnName.charAt(0) == delimiter){
@@ -50,67 +109,42 @@ public class CSVParser<IndexType, LabelType, ValType> {
         do{
             line = csvScanner.nextLine();
             lines = line.split(String.valueOf(delimiter));
-            values = Arrays.copyOfRange(lines, lines.length-columnCount , lines.length);
-            indexes = Arrays.copyOfRange(lines, 0, (lines.length-columnCount));
+            values = Arrays.copyOfRange(lines, lines.length - columnCount, lines.length);
+            indexes = Arrays.copyOfRange(lines, 0, (lines.length - columnCount));
 
 
             //Check if the dimensions are correct:
-
             //Throws if the dimension of values and labels are different
-            if (values.length != columnCount){
+            if (values.length != columnCount) {
                 throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + values.length);
             }
 
             //FIXME: This may be dead code, inconsistent length of indexes implies different values length, thus throwing before reaching this
             //TODO: Verify with tests
-            if (indexes.length == 0){
+            if (indexes.length == 0) {
                 throw new IllegalArgumentException("Inconsistent number of columns, expected " + values.length + " got " + indexes.length);
             }
 
 
             //Check if the types are correct :
             for (int i = 0; i < values.length; i++) {
-                if (firstIterationFlag){
+                if (firstIterationFlag) {
                     valuesType.add(findType(values[i]));
-                }else{
+                } else {
                     // Else we check the type of every value
-                    if (! checkType(valuesType.get(i), values[i])){
+                    if (!checkType(valuesType.get(i), values[i])) {
                         throw new IllegalArgumentException("The value " + values[i] + " has unexpected type, expected type was " + valuesType.get(i));
                     }
                 }
             }
 
+            this.appendIndexes(indexList, indexes);
 
-            //Append the indexes
-            for (String index : indexes){
-                indexList.add((IndexType) index);
-            }
-
-            for (int i = 0; i < values.length; i++) {
-                switch (valuesType.get(i)){
-                    case STRING:
-                        valueList.get(i).add((String) values[i]);
-                        break;
-                    case INTEGER:
-                        valueList.get(i).add(Integer.parseInt(values[i]));
-                        break;
-                    case DOUBLE:
-                        valueList.get(i).add(Double.parseDouble(values[i]));
-                        break;
-                    case BOOLEAN:
-                        valueList.get(i).add(Boolean.valueOf(values[i]));
-                        break;
-                    default:
-                        System.err.println("Forgot to add cases for the type " + valuesType.get(i));
-                        System.err.println("Defaulting to String");
-                        valueList.get(i).add((String) values[i]);
-                        break;
-                }
-            }
+            this.appendValues(valueList, valuesType, values);
 
             firstIterationFlag = false;
 
-        }while(csvScanner.hasNextLine());
+        } while (csvScanner.hasNextLine());
 
         Vector<Vector<?>> resultVector = new Vector<>();
         resultVector.add(indexList);
@@ -121,11 +155,37 @@ public class CSVParser<IndexType, LabelType, ValType> {
     }
 
 
-    /*
-     *                  Index1   Index2      *                                      * Label1 : 123456
-     * Label1, Label2 : 123456 | String      * Label1, Label2 : 123456 | Coffee     * Label2 : 678910
-     * Label3, Label4 : 678910 | Coffee      *                                      * Label3 : 111213
-     */
+    private void appendIndexes(Vector<IndexType> indexList, String[] indexes) {
+        //Append the indexes
+        for (String index : indexes) {
+            indexList.add((IndexType) index);
+        }
+    }
+
+
+    private void appendValues(Vector<Vector<Object>> valueList, Vector<ValueType> valuesType, String[] values) {
+        for (int i = 0; i < values.length; i++) {
+            switch (valuesType.get(i)) {
+                case STRING:
+                    valueList.get(i).add((String) values[i]);
+                    break;
+                case INTEGER:
+                    valueList.get(i).add(Integer.parseInt(values[i]));
+                    break;
+                case DOUBLE:
+                    valueList.get(i).add(Double.parseDouble(values[i]));
+                    break;
+                case BOOLEAN:
+                    valueList.get(i).add(Boolean.valueOf(values[i]));
+                    break;
+                default:
+                    System.err.println("Forgot to add cases for the type " + valuesType.get(i));
+                    System.err.println("Defaulting to String");
+                    valueList.get(i).add((String) values[i]);
+                    break;
+            }
+        }
+    }
 
 
     //FIXME: Dirty? Maybe find another way?
@@ -141,7 +201,7 @@ public class CSVParser<IndexType, LabelType, ValType> {
             return ValueType.DOUBLE;
         }catch (NumberFormatException ignored){};
 
-        //Built-in boolean parser is different, returns false if value is different than "true", ignoring case
+        //Built-in boolean parser is different, returns false if value is different from "true", ignoring case
         //So we make our own parser
         if ((value.equalsIgnoreCase("true")) || (value.equalsIgnoreCase("false"))){
             return ValueType.BOOLEAN;
@@ -154,7 +214,7 @@ public class CSVParser<IndexType, LabelType, ValType> {
 
     //FIXME: If the value is a String that is either "true" or "false", it will false-negative
     //Potential fix : Be permissive and return ((valuesType == ValueType.BOOLEAN) || (valuesType == valueType.STRING))
-    private static boolean checkType(ValueType valuesType, String value){
+    private boolean checkType(ValueType valuesType, String value){
 
         try{
             Integer.parseInt(value);
@@ -170,6 +230,11 @@ public class CSVParser<IndexType, LabelType, ValType> {
         if ((value.equalsIgnoreCase("true")) || (value.equalsIgnoreCase("false"))){
             return valuesType == ValueType.BOOLEAN;
         }
+
+        try{
+            LocalDate.parse(value);
+            return valuesType == ValueType.DATE;
+        }catch (DateTimeException ignored){}
 
         return valuesType == ValueType.STRING;
     }

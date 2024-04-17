@@ -9,7 +9,7 @@ public class DataFrame<K, L, V> {
     private Map<L, Map<K, V>> dataFrame = new LinkedHashMap<>();
 
 
-    /* DO NOT COMMIT THIS CONSTRUCTOR
+    /* DO NOT MERGE THIS CONSTRUCTOR
     *  This was taken from an advanced branch
     */
 
@@ -46,7 +46,7 @@ public class DataFrame<K, L, V> {
     }
 
         public DataFrame(String csvFilename, char delimiter) throws FileNotFoundException {
-            CSVParser<K, L, V> csvParser = new CSVParser<>();
+            CSVParser<K, L> csvParser = new CSVParser<>();
             Vector<Vector<?>> resultList = csvParser.parseCSV(csvFilename, delimiter);
 
             List<K> index = (List<K>) resultList.get(0);
@@ -99,7 +99,7 @@ public class DataFrame<K, L, V> {
 
         DataFrame<String, String, Object> dataframeList = new DataFrame<>(index, label, values);
 
-        DataFrame<String, String, Object> dataframeCSV = new DataFrame<>("src/main/resources/Classeur1.csv", ';');
+        DataFrame<String, String, Object> dataframeCSV = new DataFrame<>("src/main/resources/CSVOneDimLineCorrect.csv", ';');
     }
 
 }
