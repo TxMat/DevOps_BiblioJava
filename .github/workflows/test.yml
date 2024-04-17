@@ -49,4 +49,4 @@ jobs:
           default_author: github_actions
           message: 'Commit Jacoco bagde'
           add: '*.svg'
-
+    

@@ -25,9 +25,4 @@ replay_pid*
 /bin/
 /.metadata/
 
-#IntelliJ
-.idea/
-out/
-
-#Maven
 /target/
