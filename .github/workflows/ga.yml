@@ -9,6 +9,10 @@
 name: Workflow branche gA
 
 on:
+  push:
+    branches: [ "gitActions" ]
+  pull_request:
+    branches: [ "gitActions" ]
   workflow_call:
     secrets:
       token:
