@@ -36,8 +36,9 @@ public class TestDataFrame {
         filledDF = new DataFrame<>(index2, label2, values2);
     }
 
-
+            /* ************************************** */
             /* Tests sur la construction de DataFrame */
+            /* ************************************** */
 
 
     //Ce test vérifie qu'une exception est levée si le nombre de valeurs dans une colonne n'est pas valide
@@ -149,8 +150,9 @@ public class TestDataFrame {
         assertEquals(filledDF.toString(), dataFrame.toString());
     }
 
-
+            /* *********************************************** */
             /* Test sur les méthodes statistiques de DataFrame */
+            /* *********************************************** */
 
         /* Test sur filledDF */
 
@@ -495,8 +497,9 @@ public class TestDataFrame {
     }
 
 
-
+            /* ******************************************** */
             /* Test sur les méthodes sélection de DataFrame */
+            /* ******************************************** */
 
 
         /*Tests sur sélection de lignes*/
@@ -658,4 +661,121 @@ public class TestDataFrame {
         assertNull(nullDF);
     }
 
+
+                /* *************************************** */
+                /* Tests on display methods of a dataFrame */
+                /* *************************************** */
+
+        /* Tests on auxiliary methods */
+
+    @Test
+    public void testAlignWithShortString(){
+        String value = "I'm toto";
+        assertEquals(value, filledDF.align(value));
+    }
+
+    @Test
+    public void testAlignWithLongString(){
+        String value = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        String expected = "a".repeat(47) + "...";
+        assertEquals(expected, filledDF.align(value));
+    }
+
+        /* Tests on voidDF */
+
+        /* We verify that all display methods on an empty dataFrame will return an empty string */
+
+    @Test
+    public void testToStringOnVoidDF() {
+        assertEquals(voidDF.toString(), "");
+    }
+
+    @Test
+    public void testToStringFirstXElementsOnVoidDF_negative() {
+        assertEquals(voidDF.toStringFirstXElements(-1), "");
+    }
+
+    @Test
+    public void testToStringFirstXElementsOnVoidDF_zero() {
+        assertEquals(voidDF.toStringFirstXElements(0), "");
+    }
+
+    @Test
+    public void testToStringFirstXElementsOnVoidDF_positive() {
+        assertEquals(voidDF.toStringFirstXElements(1), "");
+    }
+
+    @Test
+    public void testToStringLastXElementsOnVoidDF_negative() {
+        assertEquals(voidDF.toStringLastXElements(-1), "");
+    }
+
+    @Test
+    public void testToStringLastXElementsOnVoidDF_zero() {
+        assertEquals(voidDF.toStringLastXElements(0), "");
+    }
+
+    @Test
+    public void testToStringLastXElementsOnVoidDF_positive() {
+        assertEquals(voidDF.toStringLastXElements(1), "");
+    }
+
+        /* Tests on filledDF */
+
+    // Verify that the dataFrame is correctly displayed (with no value changed, missed, ...)
+    @Test
+    public void testToStringOnFilledDF(){
+        String res = "X\t" + "colonne1\t" + "colonne2\t" + "colonne3\t" + "colonne4\t\n"
+                + "ligne1\t" + "1\t" + "I'm toto\t" + "a\t" + "true\t\n"
+                + "ligne2\t" + "2\t" + "I'm tata\t" + "b\t" + "false\t\n"
+                + "ligne3\t" + "3\t" + "I'm titi\t" + "c\t" + "true\t\n";
+
+        assertEquals(res.replaceAll("\\s", ""), filledDF.toString().replaceAll("\\s", ""));
+    }
+
+    // Verify that this method has the same output as toString() when entering exact number of rows in the dataFrame
+    @Test
+    public void testToStringFirstXElementsOnFilledDF_exactNbRows(){
+        assertEquals(filledDF.toStringFirstXElements(3), filledDF.toString());
+    }
+
+    // Verify that this method has the same output as toString() when entering number of rows larger than the actual
+    // number of rows in the dataFrame
+    @Test
+    public void testToStringFirstXElementsOnFilledDF_moreNbRows(){
+        assertEquals(filledDF.toStringFirstXElements(4), filledDF.toString());
+    }
+
+    // Verify that this method display only the X first rows of the dataFrame
+    @Test
+    public void testToStringFirstXElementsOnFilledDF(){
+        String res = "X\t" + "colonne1\t" + "colonne2\t" + "colonne3\t" + "colonne4\t\n"
+                + "ligne1\t" + "1\t" + "I'm toto\t" + "a\t" + "true\t\n"
+                + "ligne2\t" + "2\t" + "I'm tata\t" + "b\t" + "false\t\n";
+
+        assertEquals(res.replaceAll("\\s", ""), filledDF.toStringFirstXElements(2).replaceAll("\\s", ""));
+    }
+
+    // Verify that this method has the same output as toString() when entering exact number of rows in the dataFrame
+    @Test
+    public void testToStringLastXElementsOnFilledDF_exactNbRows(){
+        assertEquals(filledDF.toStringLastXElements(3), filledDF.toString());
+    }
+
+    // Verify that this method has the same output as toString() when entering number of rows larger than the actual
+    // number of rows in the dataFrame
+    @Test
+    public void testToStringLastXElementsOnFilledDF_moreNbRows(){
+        assertEquals(filledDF.toStringLastXElements(4), filledDF.toString());
+    }
+
+    // Verify that this method display only the X last rows of the dataFrame
+    @Test
+    public void testToStringLastXElementsOnFilledDF(){
+        String res = "X\t" + "colonne1\t" + "colonne2\t" + "colonne3\t" + "colonne4\t\n"
+                + "ligne2\t" + "2\t" + "I'm tata\t" + "b\t" + "false\t\n"
+                + "ligne3\t" + "3\t" + "I'm titi\t" + "c\t" + "true\t\n";
+
+        assertEquals(res.replaceAll("\\s", ""), filledDF.toStringLastXElements(2).replaceAll("\\s", ""));
+    }
 }

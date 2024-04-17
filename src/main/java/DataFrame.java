@@ -10,16 +10,20 @@ import static java.lang.Math.abs;
 
 public class DataFrame<K, L, V> {
 
+    private static final int MAX_CHARACTERS = 50;
+
     private Map<L, Map<K, V>> dataFrame = new LinkedHashMap<>();
 
     /**
-     * Creates a dataFrame with initial indexes, labels and values
+     * Creates a dataFrame with initial indexes, labels and values. If those lists are empty, the dataFrame will remain
+     * empty.
      *
      * @param index List of indexes representing rows of the dataFrame.
      * @param label List of labels representing columns of the dataFrame.
-     * @param values List containing lists of Objects. Each list contains data of one column and then must have the same type. However, two lists can have different type.
-     * @throws Exception If number of indexes does not match Si le nombre d'indices ne correspond pas au nombre de lignes de valeurs,
-     *                   ou si le nombre de valeurs dans une ligne ne correspond pas au nombre de labels.
+     * @param values List containing lists of Objects. Each sublist contains data of one column and then must have the
+     *               same type. However, two lists can have different type.
+     * @throws Exception If the size of indexes list does not match the size of sublists in values list or if the
+     * size of labels list does not match the size of values list, the method will throw IndexOutOfBoundsException().
      */
     public DataFrame(List<K> index, List<L> label, List<List<V>> values) throws Exception {
 
@@ -56,31 +60,195 @@ public class DataFrame<K, L, V> {
             /* ************ AFFICHAGE *******/
 
     /**
-     * Returns a textual representation of the dataFrame in the form of a two-dimensional array where each row is
-     * displayed with its index and each column with its label.
+     * Returns the string entered as parameter. It will be the string itself if its length is less than or equal to
+     * 50 characters, else the string will be truncated so that the last 3 characters are 3 ellipsis.
+     *
+     * @param valueString A value from the dataFrame in the form of a string value.
+     * @return Returns the string entered as parameter
+     */
+    public String align(String valueString){
+        //String valueString = value.toString();
+        if (valueString.length() > MAX_CHARACTERS){
+            return valueString.substring(0, MAX_CHARACTERS - 3) + "...";
+        } else {
+            return valueString;
+        }
+    }
+
+    /**
+     * Returns a Map containing the maximum number of characters per column.
+     *
+     * @return Returns a Map containing the maximum number of characters per column
+     */
+    public Map<L, Integer> getMaxLengthPerColumn(){
+        Map<L, Integer> mapWidth = new LinkedHashMap<>();
+        for (L label : dataFrame.keySet()) {
+            int max = label.toString().length();
+            for (V value : dataFrame.get(label).values()) {
+                String valueString = value.toString();
+                max = Math.max(max, align(valueString).length());
+            }
+            mapWidth.put(label, max);
+        }
+
+        return mapWidth;
+    }
+
+    /**
+     * This method returns the maximum length of all indexes starting from specified index.
+     *
+     * @param nbRows The number of indexes to compare
+     * @param startIndex The first index of indexes to compare
+     * @return Returns the maximum length of all indexes starting from specified index
+     */
+    public int getMaxWidthIndex(int nbRows, int startIndex){
+        int maxLengthIndex = 0;
+        int countRows = 0;
+        int currentIndex = 0;
+
+        Map<K, V> column1 = dataFrame.entrySet().iterator().next().getValue();
+        for (K key : column1.keySet()) {
+            if (startIndex <= currentIndex){
+                if (countRows >= nbRows){
+                    break;
+                }
+
+                int keyLength = key.toString().length();
+                if (keyLength > maxLengthIndex){
+                    maxLengthIndex = keyLength;
+                }
+                countRows++;
+            }
+
+            currentIndex++;
+        }
+
+        return Math.min(maxLengthIndex, MAX_CHARACTERS);
+    }
+
+    /**
+     * Returns a well-aligned string representation of the dataFrame in the form of a two-dimensional array where each row is
+     * displayed with its index and each column with its label. The method will return an empty string if the
+     * dataFrame is empty.
      *
      * @return Returns a string representation of the dataFrame.
      */
-    //TODO: Aligner les valeurs avec les colonnes
     @Override
     public String toString() {
+
+        if (dataFrame.isEmpty()){
+            return "";
+        }
+
         StringBuilder res = new StringBuilder();
+        Map<L, Integer> mapLength = getMaxLengthPerColumn();
+        int nbTotalRows = dataFrame.values().iterator().next().keySet().size();
+        int maxLengthIndex = getMaxWidthIndex(nbTotalRows, 0);
 
         // On ajoute les labels
-        res.append("X\t");
+        res.append(String.format("%-" + maxLengthIndex + "s", "X\t"));
         for (L label : dataFrame.keySet()) {
-            res.append(label).append("\t");
+            res.append(String.format("%" + mapLength.get(label) + "s", align(label.toString()))).append("\t");
         }
         res.append("\n");
 
         // Puis on ajoute les lignes
         for (K row : dataFrame.values().iterator().next().keySet()) {
-            res.append(row).append("\t");   // ajout de l'index
-            for (Map<K, V> columnValue : dataFrame.values()) {  // ajout des valeurs
-                V value = columnValue.get(row);
-                res.append(value).append("\t");
+            res.append(String.format("%-" + maxLengthIndex + "s", align(row.toString()))).append("\t");     // ajout de l'index
+            for (L label : dataFrame.keySet()) {    // ajout des valeurs
+                V value = dataFrame.get(label).get(row);
+                res.append(String.format("%" + mapLength.get(label) + "s", align(value.toString()))).append("\t");
             }
             res.append("\n");
+        }
+
+        return res.toString();
+    }
+
+    /**
+     * Returns a well-aligned string representation of the nbLinesToWrite first rows of the dataFrame. If the number of
+     * rows to display is zero or lower or if the dataFrame is empty, the method will return an empty string. If it's
+     * larger than the actual number of rows in the dataFrame, it will display all the dataFrame.
+     *
+     * @param nbLinesToWrite The number of rows to display
+     * @return Returns a string representation of the nbLinesToWrite first rows of the dataFrame.
+     */
+    public String toStringFirstXElements(int nbLinesToWrite){
+
+        // rien a ecrire
+        if (nbLinesToWrite <= 0 || dataFrame.isEmpty()){
+            return "";
+        }
+
+        StringBuilder res = new StringBuilder();
+        Map<L, Integer> mapLength = getMaxLengthPerColumn();
+        int maxLengthIndex = getMaxWidthIndex(nbLinesToWrite, 0);
+
+        // On ajoute les labels
+        res.append(String.format("%-" + maxLengthIndex + "s", "X\t"));
+        for (L label : dataFrame.keySet()) {
+            res.append(String.format("%" + mapLength.get(label) + "s", align(label.toString()))).append("\t");
+        }
+        res.append("\n");
+
+        // Puis on ajoute les nbLinesToWrite lignes
+        int countRows = 0;
+        for (K row : dataFrame.values().iterator().next().keySet()) {
+            if (countRows >= nbLinesToWrite){
+                break;
+            }
+
+            res.append(String.format("%-" + maxLengthIndex + "s", align(row.toString()))).append("\t");     // ajout de l'index
+            for (L label : dataFrame.keySet()) {    // ajout des valeurs
+                V value = dataFrame.get(label).get(row);
+                res.append(String.format("%" + mapLength.get(label) + "s", align(value.toString()))).append("\t");
+            }
+            res.append("\n");
+            countRows++;
+        }
+
+        return res.toString();
+    }
+
+    /**
+     * Returns a well-aligned string representation of the nbLinesToWrite last rows of the dataFrame. If the number of
+     * rows to display is zero or lower or if the dataFrame is empty, the method will return an empty string. If it's
+     * larger than the actual number of rows in the dataFrame, it will display all the dataFrame.
+     *
+     * @param nbLinesToWrite The number of rows to display
+     * @return Returns a string representation of the nbLinesToWrite last rows of the dataFrame.
+     */
+    public String toStringLastXElements(int nbLinesToWrite){
+
+        // rien a ecrire
+        if (nbLinesToWrite <= 0 || dataFrame.isEmpty()){
+            return "";
+        }
+
+        StringBuilder res = new StringBuilder();
+        Map<L, Integer> mapLength = getMaxLengthPerColumn();
+        int nbTotalRows = dataFrame.values().iterator().next().keySet().size();
+        int startIndex = nbTotalRows - nbLinesToWrite;
+        int maxLengthIndex = getMaxWidthIndex(nbLinesToWrite, startIndex);
+
+        // On ajoute les labels
+        res.append(String.format("%-" + maxLengthIndex + "s", "X\t"));
+        for (L label : dataFrame.keySet()) {
+            res.append(String.format("%" + mapLength.get(label) + "s", align(label.toString()))).append("\t");
+        }
+        res.append("\n");
+
+        int currentIndex = 0;
+        for (K row : dataFrame.values().iterator().next().keySet()) {
+            if (currentIndex >= startIndex){
+                res.append(String.format("%-" + maxLengthIndex + "s", align(row.toString()))).append("\t");   // ajout de l'index
+                for (L label : dataFrame.keySet()) {    // ajout des valeurs
+                    V value = dataFrame.get(label).get(row);
+                    res.append(String.format("%" + mapLength.get(label) + "s", align(value.toString()))).append("\t");
+                }
+                res.append("\n");
+            }
+            currentIndex++;
         }
 
         return res.toString();
@@ -438,27 +606,32 @@ public class DataFrame<K, L, V> {
             /* ************ MAIN *******/
 
     public static void main(String[] args) throws Exception {
-        List<String> index = List.of("ligne1", "ligne2");
-        List<String> label = List.of("Colonne1", "Colonne2", "colonne3", "colonne4");
+        List<String> index = List.of("ligne1", "ligne2", "ligneaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa3");
+        List<String> label = List.of("colonne1", "colonne2", "colonne3", "colonne4");
 
-        /* Chaque sous-listes represente les valeurs d'une colonne */
-        List<List<Object>> values = List.of(
-                List.of(-1, 2),
-                List.of(3.1, 4.2),
-                List.of("Hello World", "Goodbye World"),
-                List.of('a', 'b'));
+        // Chaque sous-listes represente les valeurs d'une colonne
+        List<String> index2 = List.of("ligne1", "ligne2", "ligne3");
+        List<String> label2 = List.of("colonne1", "colonne2", "colonne3", "colonne4");
+        List<List<Object>> values2 = List.of(
+                List.of(1, 2, 3),
+                List.of("I'm toto", "I'm tata", "I'm titi"),
+                List.of('a', 'b', 'c'),
+                List.of(true, false, true)
+        );
 
-        DataFrame<String, String, Object> df = new DataFrame<>(index, label, values);
-        System.out.println(df.toString());
+        DataFrame<String, String, Object> df = new DataFrame<>(index2, label2, values2);
+        System.out.println(df.toString() + "\n");
+        System.out.println(df.toStringFirstXElements(2));
+        System.out.println(df.toStringLastXElements(2));
 
-        System.out.println(df.getMin("colonne3"));
+/*        System.out.println(df.getMin("colonne3"));
         System.out.println(df.getMax("colonne3"));
         System.out.println(df.getAverage("colonne3"));
         System.out.println(df.getCount("colonne3"));
         System.out.println(df.getSum("colonne3"));
         System.out.println(df.getAbsolute("colonne3"));
-        System.out.println(df.getProduct("colonne3"));
-        
+        System.out.println(df.getProduct("colonne3"));*/
+
     }
 
 }
