@@ -15,7 +15,7 @@ on:
     branches: [ "gitActions" ]
   workflow_call:
     secrets:
-      token:
+      GH_PAT:
         required: true
 
 jobs:
