@@ -27,6 +27,10 @@ public class CSVParser<IndexType, LabelType> {
         //Parse the first line, containing the columns name
         String columnName = csvScanner.nextLine();
 
+        if (! columnName.contains(String.valueOf(delimiter))){
+            throw new IllegalArgumentException("The CSV doesn't contains the delimiter \"" + delimiter + "\"");
+        }
+
         boolean onlyOneLineFlag = (! csvScanner.hasNextLine());
 
         if (onlyOneLineFlag){
@@ -104,6 +108,8 @@ public class CSVParser<IndexType, LabelType> {
         String[] lines;
         String[] values;
         String[] indexes;
+
+        long fieldsCount = 0;
         boolean firstIterationFlag = true;
 
         do{
@@ -111,6 +117,12 @@ public class CSVParser<IndexType, LabelType> {
             lines = line.split(String.valueOf(delimiter));
             values = Arrays.copyOfRange(lines, lines.length - columnCount, lines.length);
             indexes = Arrays.copyOfRange(lines, 0, (lines.length - columnCount));
+
+            //Count the number of field separated by the delimiter, throw if it's not the same as the number of columns
+            fieldsCount = line.chars().filter(ch -> ch == delimiter).count();
+            if (columnCount != fieldsCount){
+                throw new IllegalArgumentException("Inconsistent number of columns, expected " + columnCount + " got " + fieldsCount);
+            }
 
 
             //Check if the dimensions are correct:
